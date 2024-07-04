@@ -2,41 +2,53 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-from camera import Camera
+from camera import *
 
-n = 10
+# point set definition
+n = 100
 
-x = np.random.rand(n)*10 - 0.5
-y = np.random.rand(n)*10 - 0.5
-z = np.random.rand(n)*10 - 0.5
+generation = 'parallel'
 
+# random generation
+if generation == 'random':
+    x = 10 * (np.random.rand(n) - 0.5)
+    y = 10 * (np.random.rand(n) - 0.5)
+    z = 10 * (np.random.rand(n) - 0.5)
+# parallel generation
+if generation == 'parallel':
+    x = (n // 2) * [-1] + (n // 2) * [1]
+    y = np.concatenate((np.linspace(-1, 1, n // 2), np.linspace(-1, 1, n // 2)))
+    z = np.concatenate((np.linspace(-1, 1, n // 2), np.linspace(-1, 1, n // 2)))
+# color scheme for plotting
+colors = np.linspace(0, 1, n)
+
+# 3D scatter plot
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.scatter(x, y, z)
+ax.scatter(x, y, z, c=colors)
 plt.show()
 
+# camera definition
+look_at = np.array([0, 0, 0])
+pos = np.array([0, 0, 1])
+up = [0, -1, 0]
+cam = get_camera_from_vector(pos, look_at, up, 0.005, 0, 0)
 
-lookat = np.array([0, 0, 0])
-pos = np.array([-1, 0, 0])
-forward = lookat - pos
-forward = forward / np.linalg.norm(forward)
-
-t = [1, 0, 0]
-rot = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-
-cam = Camera(1, rot, t, 0, 0)
-u = n*[0]
-v = n*[0]
-
+# camera projection
+u = []
+v = []
 for i in range(n):
     p = cam.projection([x[i], y[i], z[i]])
-    u[i] = p[0]
-    v[i] = p[1]
+    if p is not None:
+        u.append(p[0])
+        v.append(p[1])
 
+# 2D scatter plot
 plt.figure()
-plt.scatter(u, v)
-plt.xlim([-10, 10])
-plt.ylim([-10, 10])
+colors = np.linspace(0, 1, len(u))
+plt.scatter(u, v, c=colors)
+plt.xlim([-0.01, 0.01])
+plt.ylim([-0.01, 0.01])
 plt.show()
 
 
