@@ -2,9 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def get_camera_from_vector(pos, look_at, up, f=0.005, cu=0, cv=0):
+def get_camera_from_vector(name, pos, look_at, up, f=0.005, cu=0, cv=0, screen_scaling=10000, width=100, height=100,):
     """
     Get a camera from its position and view angle in 3D world coordinates (y is depth and z is height)
+    :param name: the name of the camera
     :param pos: the position of the camera
     :param look_at: the point the camera is looking at
     :param up: a vector that defines the 2D space that locks the y and z rotation
@@ -13,6 +14,9 @@ def get_camera_from_vector(pos, look_at, up, f=0.005, cu=0, cv=0):
     :param cv: the v component of the optic center projection on the screen
     :return:
     """
+    pos = np.array(pos)
+    look_at = np.array(look_at)
+    up = np.array(up)
     forward = look_at - pos
     forward = forward / np.linalg.norm(forward)
     right = np.cross(forward, up)
@@ -21,7 +25,9 @@ def get_camera_from_vector(pos, look_at, up, f=0.005, cu=0, cv=0):
     up = up / np.linalg.norm(up)
     rot = (np.vstack((right, forward, up)))
     t = - np.matmul(rot, pos)
-    return Camera(rot, t, f, cu, cv)
+    return Camera(name, rot, t, f, cu, cv, screen_scaling, width, height)
+
+# ---fonctions à utiliser plus tard si besoin de changer de repère---
 
 
 def to_world_space(m):
@@ -40,10 +46,17 @@ def to_screen_space(p):
     :return:
     """
     return [-p[1], p[0]]
+# ------
 
 
 class Camera:
-    def __init__(self, rot, t, f=0.005, cu=0, cv=0, x_screen_size=0.01, y_screen_size=0.01, width=1000, height=1000,):
+    """
+    This class can be used to represent a 3D camera.
+    You can project 3D points on its screen, and render it.
+    For now, only point rasterization is supported, will need to add surface rasterization,
+    like mesh triangles later.
+    """
+    def __init__(self, name, rot, t, f=0.01, cu=0, cv=0, screen_scaling=10000, width=100, height=100):
         """
         Creates a camera from all its parameters
         :param rot: The rotation matrix 3x3
@@ -64,19 +77,19 @@ class Camera:
         self.K = [[f, 0, cu], [0, f, cv]]
         self.width = width
         self.height = height
-        self.resolution = [width,height]
-        self.x_screen_size = x_screen_size
-        self.y_screen_size = y_screen_size
-        x_pixel_size = x_screen_size / width
-        y_pixel_size = y_screen_size / height
+        self.x_screen_size = width / screen_scaling
+        self.y_screen_size = height / screen_scaling
+        print(self.x_screen_size, self.y_screen_size)
+        x_pixel_size = self.x_screen_size / width
+        y_pixel_size = self.y_screen_size / height
         if x_pixel_size != y_pixel_size:
             print('Problem with screen proportions')
             raise Exception('Problem with screen proportions')
         self.pixel_size = x_pixel_size
-        self.x_screen = np.linspace(-x_screen_size + self.pixel_size/2, x_screen_size - self.pixel_size/2, width)
-        self.y_screen = np.linspace(-y_screen_size + self.pixel_size/2, y_screen_size - self.pixel_size/2, height)
-        self.screen = []
-        self.z_buffer = [[-1]*width]*height
+        self.x_screen = np.linspace(-self.x_screen_size + self.pixel_size/2, self.x_screen_size - self.pixel_size/2, width)
+        self.y_screen = np.linspace(-self.y_screen_size + self.pixel_size/2, self.y_screen_size - self.pixel_size/2, height)
+        self.screen = set()
+        self.name = name
 
     def projection(self, m):
         """
@@ -92,46 +105,53 @@ class Camera:
         # retrieving screen coordinates
         if z > 0:
             p = np.matmul(self.K, m_im) / z
-            if not(abs(p[0]) > self.x_screen_size or abs(p[1]) > self.y_screen_size):
-                return [p[0], p[1], z]
+            if not (abs(p[0]) > self.x_screen_size or abs(p[1]) > self.y_screen_size):
+                return p[0], p[1], z
         return None
 
     def rasterize(self, p):
         """
         Get the indices of the pixel where the point is
-        :param p: the 2D point in camera screen space
-        :return: the indices in camera screen space
+        :param p: the 2D point in camera screen space with its depth value
+        :return: the indices in camera screen space, and the depth value
         """
         dx = np.abs(self.x_screen - p[0])
         dy = np.abs(self.y_screen - p[1])
         ix = np.argmin(dx)
         iy = np.argmin(dy)
-        return [ix, iy, p[2]]
+        return ix, iy
 
-    def set_pixel(self, x, y, z, v):
+    def set_pixel(self, p, v):
         """
         Modifies a pixel value
-        :param x: pixel x coordinate
-        :param y: pixel y coordinate
+        :param p: the pixel coordinates (x,y)
         :param v: pixel value
-        :return:
+        :return: if the pixel was modified
         """
-        if z < self.z_buffer[x][y] or self.z_buffer[x][y] == -1:
-            self.screen.append([x,y])
-            self.z_buffer[x][y] = z
-            return True
-        return False
 
-    def see_point(self, m):
+        self.screen.add((p[0], p[1]))
+        return True
+
+    def get_pixel_value(self, p):
         """
-        Projects a point on camera screen
+        Tells if a pixel is lit or not
+        :param p: the pixel coordinates (x,y)
+        :return: 1 is pixel is lit or 0 otherwise
+        """
+        if p in self.screen:
+            return 1
+        return 0
+
+    def place_point(self, m):
+        """
+        Place a point on camera screen
         :param m: 3D point in world space
-        :return:
+        :return: if the point was added to the screen
         """
         p = self.projection(m)
         if p is not None:
             r = self.rasterize(p)
-            if self.set_pixel(r[0], r[1], r[2], 1):
+            if self.set_pixel(r, 1):
                 return True
         return False
 
@@ -144,15 +164,15 @@ class Camera:
         ax.set_xlim(0, self.width)
         ax.set_ylim(0, self.height)
         ax.set_aspect('equal', adjustable='box')  # Aspect ratio 1:1
-        ax.set_title('Camera screen')
+        ax.set_title('Screen from : ' + self.name)
         return fig, ax
 
-    def render(self, ax):
+    def render(self):
         """
-        Render the current screen on a given ax plot
-        :param ax: the ax plot
+        Render the current screen
         :return:
         """
+        _, ax = self.get_plot()
         for [x, y] in self.screen:
             pixel = plt.Rectangle((x, y), 1, 1)
             ax.add_patch(pixel)
@@ -162,8 +182,8 @@ class Camera:
         Wipes the screen and the z_buffer
         :return:
         """
-        self.screen = []
-        self.z_buffer = [[-1] * self.width] * self.height
+        self.screen = set()
+
 
 
 
