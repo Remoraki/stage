@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def get_camera_from_vector(name, pos, look_at, up, f=0.005, cu=0, cv=0, screen_scaling=10000, width=100, height=100,):
+def get_camera_from_vector(name, pos, look_at, up, f=0.005, cu=0, cv=0, screen_scaling=10000, width=120, height=100,):
     """
     Get a camera from its position and view angle in 3D world coordinates (y is depth and z is height)
     :param name: the name of the camera
@@ -56,7 +56,9 @@ class Camera:
     For now, only point rasterization is supported, will need to add surface rasterization,
     like mesh triangles later.
     """
-    def __init__(self, name, rot, t, f=0.01, cu=0, cv=0, screen_scaling=10000, width=100, height=100):
+    def __init__(self, name, rot, t,
+                 f=0.01, cu=0, cv=0,
+                 screen_scaling=10000, width=120, height=100):
         """
         Creates a camera from all its parameters
         :param rot: The rotation matrix 3x3
@@ -64,8 +66,6 @@ class Camera:
         :param f: the focal length of the camera
         :param cu: the u component of the optic center projection on the screen
         :param cv: the v component of the optic center projection on the screen
-        :param x_screen_size: the x screen size of the camera
-        :param y_screen_size: the y screen size of the camera
         :param width: the width of the camera screen
         :param height: the height of the camera screen
         """
@@ -79,15 +79,13 @@ class Camera:
         self.height = height
         self.x_screen_size = width / screen_scaling
         self.y_screen_size = height / screen_scaling
-        print(self.x_screen_size, self.y_screen_size)
-        x_pixel_size = self.x_screen_size / width
-        y_pixel_size = self.y_screen_size / height
-        if x_pixel_size != y_pixel_size:
-            print('Problem with screen proportions')
-            raise Exception('Problem with screen proportions')
-        self.pixel_size = x_pixel_size
-        self.x_screen = np.linspace(-self.x_screen_size + self.pixel_size/2, self.x_screen_size - self.pixel_size/2, width)
-        self.y_screen = np.linspace(-self.y_screen_size + self.pixel_size/2, self.y_screen_size - self.pixel_size/2, height)
+        self.pixel_size = 1 / screen_scaling
+        self.x_screen = np.linspace(
+            -self.x_screen_size + self.pixel_size/2, self.x_screen_size - self.pixel_size/2, width)
+        self.y_screen = np.linspace(
+            -self.y_screen_size + self.pixel_size/2, self.y_screen_size - self.pixel_size/2, height)
+        self.x_screen_grid, self.y_screen_grid = np.meshgrid(self.x_screen, self.y_screen)
+        self.pixel_values = np.array([[0.]*width]*height)
         self.screen = set()
         self.name = name
 
@@ -119,41 +117,35 @@ class Camera:
         dy = np.abs(self.y_screen - p[1])
         ix = np.argmin(dx)
         iy = np.argmin(dy)
-        return ix, iy
+        return iy, ix
 
-    def set_pixel(self, p, v):
+    def gaussian_splatting(self, p):
         """
-        Modifies a pixel value
-        :param p: the pixel coordinates (x,y)
-        :param v: pixel value
-        :return: if the pixel was modified
+        Apply gaussian_splatting rasterisation of a given point on screen
+        :param p: the 2D point in camera screen space with its depth value
+        :return: the indices in camera screen space, and the depth value
         """
-
-        self.screen.add((p[0], p[1]))
-        return True
+        dx = np.abs(self.x_screen_grid - p[0])
+        dy = np.abs(self.y_screen_grid - p[1])
+        d = np.exp((-np.square(dx) - np.square(dy)) * (5000*p[2])**2 / 2)
+        self.pixel_values += d
 
     def get_pixel_value(self, p):
         """
         Tells if a pixel is lit or not
         :param p: the pixel coordinates (x,y)
-        :return: 1 is pixel is lit or 0 otherwise
+        :return: the current value of the pixel
         """
-        if p in self.screen:
-            return 1
-        return 0
+        return self.pixel_values[p]
 
     def place_point(self, m):
         """
         Place a point on camera screen
         :param m: 3D point in world space
-        :return: if the point was added to the screen
         """
         p = self.projection(m)
         if p is not None:
-            r = self.rasterize(p)
-            if self.set_pixel(r, 1):
-                return True
-        return False
+            self.gaussian_splatting(p)
 
     def get_plot(self):
         """
@@ -173,9 +165,12 @@ class Camera:
         :return:
         """
         _, ax = self.get_plot()
-        for [x, y] in self.screen:
-            pixel = plt.Rectangle((x, y), 1, 1)
-            ax.add_patch(pixel)
+        grid_i, grid_j = np.meshgrid(range(self.width), range(self.height))
+        for i in range(self.height):
+            for j in range(self.width):
+                if self.pixel_values[i, j] >= 0.1:
+                    pixel = plt.Rectangle((j, i), 1, 1)
+                    ax.add_patch(pixel)
 
     def wipe(self):
         """
