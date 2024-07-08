@@ -36,7 +36,7 @@ plt.show()
 look_at = (1, 0, 0)
 pos = (0, -3, 0)
 up = (0, 0, 1)
-cam = get_camera_from_vector('cam', pos, look_at, up, 0.01)
+cam = get_camera_from_vector('cam', pos, look_at, up)
 
 # rendering the set of points
 for i in range(n):

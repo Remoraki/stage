@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def get_camera_from_vector(name, pos, look_at, up, f=0.005, cu=0, cv=0, screen_scaling=10000, width=100, height=100,):
+def get_camera_from_vector(name, pos, look_at, up, f=50, cu=50, cv=50, width=100, height=100,):
     """
     Get a camera from its position and view angle in 3D world coordinates (y is depth and z is height)
     :param name: the name of the camera
@@ -25,7 +25,7 @@ def get_camera_from_vector(name, pos, look_at, up, f=0.005, cu=0, cv=0, screen_s
     up = up / np.linalg.norm(up)
     rot = (np.vstack((right, forward, up)))
     t = - np.matmul(rot, pos)
-    return Camera(name, rot, t, f, cu, cv, screen_scaling, width, height)
+    return Camera(name, rot, t, f, cu, cv, width, height)
 
 # ---fonctions à utiliser plus tard si besoin de changer de repère---
 
@@ -56,7 +56,7 @@ class Camera:
     For now, only point rasterization is supported, will need to add surface rasterization,
     like mesh triangles later.
     """
-    def __init__(self, name, rot, t, f=0.01, cu=0, cv=0, screen_scaling=10000, width=100, height=100):
+    def __init__(self, name, rot, t, f=5, cu=50, cv=50, width=100, height=100):
         """
         Creates a camera from all its parameters
         :param rot: The rotation matrix 3x3
@@ -77,17 +77,6 @@ class Camera:
         self.K = [[f, 0, cu], [0, f, cv]]
         self.width = width
         self.height = height
-        self.x_screen_size = width / screen_scaling
-        self.y_screen_size = height / screen_scaling
-        print(self.x_screen_size, self.y_screen_size)
-        x_pixel_size = self.x_screen_size / width
-        y_pixel_size = self.y_screen_size / height
-        if x_pixel_size != y_pixel_size:
-            print('Problem with screen proportions')
-            raise Exception('Problem with screen proportions')
-        self.pixel_size = x_pixel_size
-        self.x_screen = np.linspace(-self.x_screen_size + self.pixel_size/2, self.x_screen_size - self.pixel_size/2, width)
-        self.y_screen = np.linspace(-self.y_screen_size + self.pixel_size/2, self.y_screen_size - self.pixel_size/2, height)
         self.screen = set()
         self.name = name
 
@@ -105,8 +94,7 @@ class Camera:
         # retrieving screen coordinates
         if z > 0:
             p = np.matmul(self.K, m_im) / z
-            if not (abs(p[0]) > self.x_screen_size or abs(p[1]) > self.y_screen_size):
-                return p[0], p[1], z
+            return p[0], p[1], z
         return None
 
     def rasterize(self, p):
@@ -115,8 +103,8 @@ class Camera:
         :param p: the 2D point in camera screen space with its depth value
         :return: the indices in camera screen space, and the depth value
         """
-        dx = np.abs(self.x_screen - p[0])
-        dy = np.abs(self.y_screen - p[1])
+        dx = np.abs(np.array(range(self.width)) - p[0])
+        dy = np.abs(np.array(range(self.height)) - p[1])
         ix = np.argmin(dx)
         iy = np.argmin(dy)
         return ix, iy
@@ -150,9 +138,7 @@ class Camera:
         """
         p = self.projection(m)
         if p is not None:
-            r = self.rasterize(p)
-            if self.set_pixel(r, 1):
-                return True
+            self.set_pixel(p, 1)
         return False
 
     def get_plot(self):
