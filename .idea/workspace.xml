@@ -4,8 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eb26c681-7293-4ded-8906-9fff2700706d" name="Changes" comment="camera rasterization looking fine">
+    <list default="true" id="eb26c681-7293-4ded-8906-9fff2700706d" name="Changes" comment="shape from silhouette prototype">
+      <change afterPath="$PROJECT_DIR$/image_shape_from_silhouette.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/camera.py" beforeDir="false" afterPath="$PROJECT_DIR$/camera.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rasterization.py" beforeDir="false" afterPath="$PROJECT_DIR$/rasterization.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/retroprojection.py" beforeDir="false" afterPath="$PROJECT_DIR$/retroprojection_test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,8 +57,8 @@
   "keyToString": {
     "Python.main.executor": "Run",
     "Python.rasterization (1).executor": "Run",
-    "Python.rasterization.executor": "Debug",
-    "Python.retroprojection.executor": "Run",
+    "Python.rasterization.executor": "Run",
+    "Python.retroprojection.executor": "Debug",
     "Python.shapes.executor": "Run",
     "Python.test.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -70,7 +74,7 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected="Python.rasterization">
+  <component name="RunManager" selected="Python.retroprojection_test">
     <configuration name="rasterization" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="stage" />
       <option name="ENV_FILES" value="" />
@@ -94,7 +98,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="retroprojection" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="retroprojection_test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="stage" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -108,7 +112,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/retroprojection.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\gagag\PycharmProjects\stage\retroprojection_test.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -119,7 +123,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.retroprojection" />
+        <item itemvalue="Python.retroprojection_test" />
+        <item itemvalue="Python.retroprojection_test" />
       </list>
     </recent_temporary>
   </component>
@@ -147,6 +152,8 @@
       <workItem from="1720113381323" duration="11534000" />
       <workItem from="1720179809155" duration="3028000" />
       <workItem from="1720424117820" duration="2614000" />
+      <workItem from="1720450860326" duration="1346000" />
+      <workItem from="1720510888698" duration="3012000" />
     </task>
     <task id="LOCAL-00001" summary="init commit">
       <option name="closed" value="true" />
@@ -188,9 +195,19 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/camera.py</url>
-          <line>89</line>
-          <option name="timeStamp" value="22" />
+          <url>file://$PROJECT_DIR$/SFS.py</url>
+          <line>26</line>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/SFS.py</url>
+          <line>29</line>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/SFS.py</url>
+          <line>28</line>
+          <option name="timeStamp" value="13" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -205,9 +222,9 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/stage$test.coverage" NAME="test Coverage Results" MODIFIED="1720095652649" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$main.coverage" NAME="rasterization Coverage Results" MODIFIED="1720170392202" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/stage$rasterization.coverage" NAME="rasterization Coverage Results" MODIFIED="1720448436026" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/stage$rasterization.coverage" NAME="rasterization Coverage Results" MODIFIED="1720512148939" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$rasterization__1_.coverage" NAME="rasterization (1) Coverage Results" MODIFIED="1720424220034" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$shapes.coverage" NAME="shapes Coverage Results" MODIFIED="1720096615446" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/stage$retroprojection.coverage" NAME="retroprojection Coverage Results" MODIFIED="1720448302820" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/stage$retroprojection.coverage" NAME="retroprojection Coverage Results" MODIFIED="1720512229284" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def get_camera_from_vector(name, pos, look_at, up, f=50, cu=50, cv=50, width=100, height=100,):
+def get_camera_from_vector(name, pos, look_at, up, f=50, cu=50, cv=50, width=120, height=100,):
     """
     Get a camera from its position and view angle in 3D world coordinates (y is depth and z is height)
     :param name: the name of the camera
@@ -56,7 +56,7 @@ class Camera:
     For now, only point rasterization is supported, will need to add surface rasterization,
     like mesh triangles later.
     """
-    def __init__(self, name, rot, t, f=5, cu=50, cv=50, width=100, height=100):
+    def __init__(self, name, rot, t, f=5, cu=50, cv=50, width=120, height=100):
         """
         Creates a camera from all its parameters
         :param rot: The rotation matrix 3x3
@@ -77,7 +77,9 @@ class Camera:
         self.K = [[f, 0, cu], [0, f, cv]]
         self.width = width
         self.height = height
+        self.pixel_values = np.array([[0.]*width]*height)
         self.screen = set()
+        self.screen_x, self.screen_y = np.meshgrid(range(width), range(height))
         self.name = name
 
     def projection(self, m):
@@ -94,7 +96,8 @@ class Camera:
         # retrieving screen coordinates
         if z > 0:
             p = np.matmul(self.K, m_im) / z
-            return p[0], p[1], z
+            if 0 <= p[0] < self.width and 0 <= p[1] < self.height:
+                return p[0], p[1], z
         return None
 
     def rasterize(self, p):
@@ -109,6 +112,17 @@ class Camera:
         iy = np.argmin(dy)
         return ix, iy
 
+    def gaussian_splatting(self, p):
+        """
+        Apply gaussian_splatting rasterisation of a given point on screen
+        :param p: the 2D point in camera screen space with its depth value
+        :return: the indices in camera screen space, and the depth value
+        """
+        dx = np.abs(self.screen_x - p[0])
+        dy = np.abs(self.screen_y - p[1])
+        d = np.exp((-np.square(dx) - np.square(dy)) * (p[2]) ** 2 / 2)
+        self.pixel_values += d
+
     def set_pixel(self, p, v):
         """
         Modifies a pixel value
@@ -121,14 +135,10 @@ class Camera:
         return True
 
     def get_pixel_value(self, p):
-        """
-        Tells if a pixel is lit or not
-        :param p: the pixel coordinates (x,y)
-        :return: 1 is pixel is lit or 0 otherwise
-        """
-        if p in self.screen:
+        if self.pixel_values[p[1], p[0]] >= 1:
             return 1
-        return 0
+        else:
+            return 0
 
     def place_point(self, m):
         """
@@ -138,8 +148,13 @@ class Camera:
         """
         p = self.projection(m)
         if p is not None:
-            self.set_pixel(p, 1)
-        return False
+            r = self.rasterize(p)
+            self.set_pixel(r, 1)
+
+    def place_point_gaussian(self, m):
+        p = self.projection(m)
+        if p is not None:
+            self.gaussian_splatting(p)
 
     def get_plot(self):
         """
@@ -162,6 +177,14 @@ class Camera:
         for [x, y] in self.screen:
             pixel = plt.Rectangle((x, y), 1, 1)
             ax.add_patch(pixel)
+
+    def render_gaussian(self):
+        _, ax = self.get_plot()
+        for i in range(self.height):
+            for j in range(self.width):
+                if self.pixel_values[i, j] >= 1:
+                    pixel = plt.Rectangle((j, i), 1, 1)
+                    ax.add_patch(pixel)
 
     def wipe(self):
         """
