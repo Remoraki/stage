@@ -32,17 +32,16 @@ class Camera:
         self.height = height
         self.pixel_values = np.array([[0.]*width]*height)
         self.screen = set()
-        self.screen_x, self.screen_y = np.meshgrid(range(width), range(height))
         self.name = name
 
     def projection(self, m):
         """
-        Project a point on a camera screen
+        Project a point on the camera screen
         :param m: 3D point in world space
         :return: A 2D point on the camera screen space
         """
         # putting the point in camera space
-        m_cam = (np.matmul(self.rot, m) + self.t)
+        m_cam = np.matmul(self.rot, m) + self.t
         z = m_cam[2]
         # retrieving screen coordinates
         if z > 0:
@@ -50,6 +49,24 @@ class Camera:
             if 0 <= p[0] < self.height - 1 and 0 <= p[1] < self.width - 1:
                 return p[0], p[1], z
         return None
+
+    def projection_matrix(self, M):
+        """
+        Project a set of 3D points on the camera screen
+        :param M: an 3*n matrix that contains all the points
+        :return: a 2*n matrix that contains all the pixels corresponding to the projection,
+        and the mask of all the pixels that are inside the screen
+        """
+        t = self.t[:, np.newaxis]
+        M_cam = np.matmul(self.K, np.matmul(self.rot, M) + t)
+        Z = np.copy(M_cam[2, :])
+        M_cam /= Z
+        P = np.round(M_cam).astype(int)
+        lower_bound = np.array([[0], [0], [0]])
+        upper_bound = np.array([[self.height-1], [self.width-1], [100000]])
+        mask = np.logical_and(lower_bound <= M_cam, M_cam < upper_bound)
+        mask = np.all(mask, axis=0)
+        return P[:, mask], np.where(mask)[0]
 
     def set_pixel(self, p, v):
         """
@@ -67,9 +84,9 @@ class Camera:
         :return:
         """
         if np.sum(self.pixel_values[p[1], p[0]]) > 0:
-            return 1
+            return True
         else:
-            return 0
+            return False
 
     def get_plot(self):
         """

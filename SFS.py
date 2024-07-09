@@ -17,9 +17,11 @@ class ShapeFromSilhouette:
         y = np.linspace(center[1] - size, center[1] + size, n)
         z = np.linspace(center[2] - size, center[2] + size, n)
 
+        self.voxel_size = 2*size / n
         self.size = size
         self.n = n
         self.VX, self.VY, self.VZ = np.meshgrid(x, y, z)
+        self.points = np.vstack([self.VX.ravel(), self.VY.ravel(), self.VZ.ravel()])
         self.reconstruction = np.array([[[0] * n] * n] * n)
         self.sfs = []
         self.max_recursion = max_recursion
@@ -34,7 +36,8 @@ class ShapeFromSilhouette:
                 p = camera.projection(m)
                 if p is not None:
                     r = rasterize(p)
-                    self.reconstruction[index] += camera.get_pixel_value(r)
+                    if camera.get_pixel_value(r):
+                        self.reconstruction[index] += 1
             if self.reconstruction[index] >= len(cameras):
                 if self.max_recursion <= 0:
                     self.sfs.append(m)
@@ -44,3 +47,17 @@ class ShapeFromSilhouette:
                     sub_shape = sub_sfs.reconstruct_from_cameras(cameras)
                     self.sfs = self.sfs + sub_shape
         return self.sfs
+
+    def reconstruct_from_cameras_matrix(self, cameras):
+        self.reconstruction = np.array([0] * self.n**3)
+        self.sfs = []
+        for camera in tqdm(cameras, 'reconstructing shape'):
+            P, mask = camera.projection_matrix(self.points)
+
+            binary_mask = [camera.get_pixel_value(P[:, k]) for k in range(P.shape[1])]
+            mask = mask[np.where(binary_mask)]
+            self.reconstruction[mask] += 1
+        self.sfs = self.points[:, np.where(self.reconstruction == len(cameras))[0]]
+        return self.sfs
+
+
