@@ -6,7 +6,7 @@ from tqdm import tqdm
 from SFS import *
 
 size = 1
-sfs = ShapeFromSilhouette(size, 30)
+sfs = ShapeFromSilhouette((0, 0, 0), size, 50, 0)
 
 # definition of the shape
 s_X, s_Y, s_Z = [], [], []
@@ -55,12 +55,12 @@ for camera in cameras:
 plt.show()
 
 # voxel projection calculation
-sfs.reconstruct_from_cameras(cameras)
+shape = np.array(sfs.reconstruct_from_cameras(cameras))
 
 # plotting the reconstructed shape
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.scatter(sfs.shape[:, 0], sfs.shape[:, 1], sfs.shape[:, 2])
+ax.scatter(shape[:, 0], shape[:, 1], shape[:, 2])
 ax.set_xlim([-size, size])
 ax.set_ylim([-size, size])
 ax.set_zlim([-size, size])

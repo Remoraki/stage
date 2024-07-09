@@ -135,7 +135,7 @@ class Camera:
         return True
 
     def get_pixel_value(self, p):
-        if self.pixel_values[p[1], p[0]] >= 1:
+        if self.pixel_values[p[1], p[0]] >= 1 or self.screen.__contains__(p):
             return 1
         else:
             return 0
