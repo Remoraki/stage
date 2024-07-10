@@ -1,4 +1,6 @@
 import os
+from time import time
+
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
@@ -30,10 +32,13 @@ for i in tqdm(range(nb_of_images), 'creating cameras'):
 
 
 # reconstruction
+t1 = time()
 size = 0.5
-sfs = ShapeFromSilhouette((0, 0, 0), size, 30, 0)
+sfs = ShapeFromSilhouette((0, 0, 0), size, 5, 1)
 shape = np.array(sfs.reconstruct_from_cameras_matrix(cameras))
-plt.show()
+t2 = time()
+print('Execution time : ' + str(t2 - t1))
+print('Number of points : ' + str(shape.shape[1]))
 
 # plotting the reconstructed shape
 fig = plt.figure()

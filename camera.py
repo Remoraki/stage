@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 
 def rasterize(p):
@@ -50,9 +51,10 @@ class Camera:
                 return p[0], p[1], z
         return None
 
-    def projection_matrix(self, M):
+    def projection_matrix(self, M, only_inside=True):
         """
         Project a set of 3D points on the camera screen
+        :param only_inside: If the function should return all projections or only the one inside the screen
         :param M: an 3*n matrix that contains all the points
         :return: a 2*n matrix that contains all the pixels corresponding to the projection,
         and the mask of all the pixels that are inside the screen
@@ -66,7 +68,10 @@ class Camera:
         upper_bound = np.array([[self.height-1], [self.width-1], [100000]])
         mask = np.logical_and(lower_bound <= M_cam, M_cam < upper_bound)
         mask = np.all(mask, axis=0)
-        return P[:, mask], np.where(mask)[0]
+        if only_inside:
+            return P[:, mask], np.where(mask)[0]
+        else:
+            return P, np.where(mask)[0]
 
     def set_pixel(self, p, v):
         """
@@ -88,29 +93,36 @@ class Camera:
         else:
             return False
 
-    def get_plot(self):
-        """
-        Get a simple plot for camera screen rendering
-        :return: fig, ax
-        """
-        fig, ax = plt.subplots()
-        ax.set_xlim(0, self.width)
-        ax.set_ylim(0, self.height)
-        ax.set_aspect('equal', adjustable='box')  # Aspect ratio 1:1
-        ax.set_title('Screen from : ' + self.name)
-        return fig, ax
+    def get_bounding_box(self, X, Y):
+        x_min, x_max = np.min(X), np.max(X)
+        y_min, y_max = np.min(Y), np.max(Y)
+        x_min = min(max(x_min, 0), self.height - 1)
+        x_max = min(max(x_max, 0), self.height - 1)
+        y_min = min(max(y_min, 0), self.width - 1)
+        y_max = min(max(y_max, 0), self.width - 1)
+        top_left = (x_min, y_min)
+        bottom_right = (x_max, y_max)
+        return top_left, bottom_right
 
-    def render(self):
+    def scan_points(self, X, Y):
         """
-        Renders the camera current screen
+        Looks if the bounding box of the points contains any lit pixel
+        :param X:
+        :param Y:
+        :return: A boolean
+        """
+        top_left, top_right = self.get_bounding_box(X, Y)
+        return self.scan_box(top_left, top_right)
+
+    def scan_box(self, top_left, bottom_right):
+        """
+        Looks if the box contains any lit pixel
+        :param top_left: The top left corner of the box in camera screen space
+        :param bottom_right: The top right corner of the box in camera screen space
         :return:
         """
-        _, ax = self.get_plot()
-        for i in range(self.height):
-            for j in range(self.width):
-                if self.pixel_values[i, j] >= 1:
-                    pixel = plt.Rectangle((j, i), 1, 1)
-                    ax.add_patch(pixel)
+        values = self.pixel_values[top_left[1]:bottom_right[1], top_left[0]:bottom_right[0], :]
+        return np.any(np.sum(values, 2) > 0)
 
     def wipe(self):
         """
