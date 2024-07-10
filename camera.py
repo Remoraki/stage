@@ -109,7 +109,7 @@ class Camera:
         Looks if the bounding box of the points contains any lit pixel
         :param X:
         :param Y:
-        :return: A boolean
+        :return: -1 if the box is fully outside, 1 if it is fully inside, and 0 otherwise
         """
         top_left, top_right = self.get_bounding_box(X, Y)
         return self.scan_box(top_left, top_right)
@@ -119,10 +119,16 @@ class Camera:
         Looks if the box contains any lit pixel
         :param top_left: The top left corner of the box in camera screen space
         :param bottom_right: The top right corner of the box in camera screen space
-        :return:
+        :return: -1 if the box is fully outside, 1 if it is fully inside, and 0 otherwise
         """
         values = self.pixel_values[top_left[1]:bottom_right[1], top_left[0]:bottom_right[0], :]
-        return np.any(np.sum(values, 2) > 0)
+        pixel_values = np.sum(values, 2)
+        nb_of_lit_pixels = np.sum(pixel_values > 0)
+        if nb_of_lit_pixels == 0:
+            return -1
+        if nb_of_lit_pixels == pixel_values.shape[0] * pixel_values.shape[1]:
+            return 1
+        return 0
 
     def wipe(self):
         """

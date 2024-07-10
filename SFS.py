@@ -38,52 +38,61 @@ class ShapeFromSilhouette:
         self.n = n
         self.VX, self.VY, self.VZ = np.meshgrid(x, y, z)
         self.points = np.vstack([self.VX.ravel(), self.VY.ravel(), self.VZ.ravel()])
-        self.reconstruction = np.array([[[0] * n] * n] * n)
         self.sfs = np.empty((3, 0))
         self.max_recursion = max_recursion
         self.center = center
 
     def reconstruct_from_cameras_matrix(self, cameras):
+        print('Finding matching voxels')
+        points = self.get_voxel_centers(cameras)
+        # reconstructing shape inside the voxel grid
+        reconstruction = np.array([0] * points.shape[1])
+        self.sfs = np.empty((3, 0))
+        # scanning all the cameras
+        for camera in tqdm(cameras, 'reconstructing shape'):
+            # projecting the centers of the voxels on the screen
+            P, mask = camera.projection_matrix(points)
+            # incrementing each voxel that lands on a binary mask
+            binary_mask = [camera.get_pixel_value(P[:, k]) for k in range(P.shape[1])]
+            mask = mask[np.where(binary_mask)]
+            reconstruction[mask] += 1
+        # keep only the voxels that landed on all the masks
+        self.sfs = points[:, np.where(reconstruction == len(cameras))[0]]
+        return self.sfs
+
+    def get_voxel_centers(self, cameras):
         if self.max_recursion <= 0:
-            # reconstructing shape inside the voxel grid
-            self.reconstruction = np.array([0] * self.n ** 3)
-            self.sfs = np.empty((3, 0))
-            # scanning all the cameras
-            for camera in cameras:
-                # projecting the centers of the voxels on the screen
-                P, mask = camera.projection_matrix(self.points)
-                # incrementing each voxel that lands on a binary mask
-                binary_mask = [camera.get_pixel_value(P[:, k]) for k in range(P.shape[1])]
-                mask = mask[np.where(binary_mask)]
-                self.reconstruction[mask] += 1
-            # keep only the voxels that landed on all the masks
-            self.sfs = self.points[:, np.where(self.reconstruction == len(cameras))[0]]
+            return self.points
         else:
+            centers = np.empty((3, 0))
             # look for a smaller resolution when useful
             for k in range(self.points.shape[1]):
                 point = self.points[:, k]
                 voxel_vertices = get_voxel_vertices(point[0], point[1], point[2], self.voxel_size)
                 # we explore only voxel that project on every camera
                 count = 0
+                inside_count = 0
                 for camera in cameras:
                     voxel_projections, _ = camera.projection_matrix(voxel_vertices, False)
-                    # plt.figure()
-                    # plt.imshow(camera.pixel_values)
-                    # plt.scatter(voxel_projections[0, :], voxel_projections[1, :])
-                    if camera.scan_points(voxel_projections[0, :], voxel_projections[1, :]):
-                        # print('outside')
+                    interpolation = camera.scan_points(voxel_projections[0, :], voxel_projections[1, :])
+
+                    #print('Interp : ' + str(interpolation))
+                    #plt.figure()
+                    #plt.title(camera.name)
+                    #plt.imshow(camera.pixel_values)
+                    #plt.scatter(voxel_projections[0, :], voxel_projections[1, :])
+                    #plt.show()
+
+                    if interpolation == 0:
                         count += 1
-                        # plt.show()
+                    elif interpolation == 1:
+                        count += 1
+                        inside_count += 1
                     else:
-                        # print('inside')
-                        # plt.show()
                         break
-                if count == len(cameras):
-                    sub_sfs = ShapeFromSilhouette(point, self.voxel_size/2, self.n, self.max_recursion - 1)
-                    sub_shape = sub_sfs.reconstruct_from_cameras_matrix(cameras)
-                    self.sfs = np.concatenate((self.sfs, sub_shape), axis=1)
-        return np.array(self.sfs)
-
-
+                if count == len(cameras) and inside_count != len(cameras):
+                    sub_sfs = ShapeFromSilhouette(point, self.voxel_size / 2, self.n, self.max_recursion - 1)
+                    centers = np.concatenate((centers, sub_sfs.get_voxel_centers(cameras)), axis=1)
+        return centers
 
 

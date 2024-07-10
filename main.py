@@ -32,9 +32,9 @@ for i in tqdm(range(nb_of_images), 'creating cameras'):
 
 
 # reconstruction
-t1 = time()
 size = 0.5
-sfs = ShapeFromSilhouette((0, 0, 0), size, 5, 1)
+sfs = ShapeFromSilhouette((0, 0, 0), size, 3, 3)
+t1 = time()
 shape = np.array(sfs.reconstruct_from_cameras_matrix(cameras))
 t2 = time()
 print('Execution time : ' + str(t2 - t1))
