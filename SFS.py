@@ -43,6 +43,11 @@ class ShapeFromSilhouette:
         self.center = center
 
     def reconstruct_from_cameras_matrix(self, cameras):
+        """
+        Reconstruct a 3D voxel silhouette from different cameras
+        :param cameras: A list of cameras
+        :return: The silhouette voxel centers
+        """
         print('Finding matching voxels')
         points = self.get_voxel_centers(cameras)
         # reconstructing shape inside the voxel grid
@@ -61,6 +66,12 @@ class ShapeFromSilhouette:
         return self.sfs
 
     def get_voxel_centers(self, cameras):
+        """
+        Scan recursively the grid to determine which areas might contain the silhouette. This prevents computing the
+        projection of many useless voxels.
+        :param cameras: The lit of cameras.
+        :return: A list of the voxel centers to compute.
+        """
         if self.max_recursion <= 0:
             return self.points
         else:

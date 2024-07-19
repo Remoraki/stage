@@ -33,9 +33,10 @@ for i in tqdm(range(nb_of_images), 'creating cameras'):
 
 # reconstruction
 size = 0.5
-sfs = ShapeFromSilhouette((0, 0, 0), size, 3, 3)
+sfs = ShapeFromSilhouette((0, 0, 0), size, 2, 7)
 t1 = time()
 shape = np.array(sfs.reconstruct_from_cameras_matrix(cameras))
+np.save('C:/2A/Stage/buddha/shape_from_silhouette.npy', shape)
 t2 = time()
 print('Execution time : ' + str(t2 - t1))
 print('Number of points : ' + str(shape.shape[1]))
