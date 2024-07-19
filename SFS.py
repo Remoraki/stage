@@ -41,8 +41,9 @@ class ShapeFromSilhouette:
         self.sfs = np.empty((3, 0))
         self.max_recursion = max_recursion
         self.center = center
+        self.resolution = n**(max_recursion+1)
 
-    def reconstruct_from_cameras_matrix(self, cameras):
+    def reconstruct_from_cameras_matrix(self, cameras, remove_inside=False):
         """
         Reconstruct a 3D voxel silhouette from different cameras
         :param cameras: A list of cameras
@@ -65,7 +66,7 @@ class ShapeFromSilhouette:
         self.sfs = points[:, np.where(reconstruction == len(cameras))[0]]
         return self.sfs
 
-    def get_voxel_centers(self, cameras):
+    def get_voxel_centers(self, cameras, remove_inside=False):
         """
         Scan recursively the grid to determine which areas might contain the silhouette. This prevents computing the
         projection of many useless voxels.
@@ -101,7 +102,7 @@ class ShapeFromSilhouette:
                         inside_count += 1
                     else:
                         break
-                if count == len(cameras) and inside_count != len(cameras):
+                if count == len(cameras) and (inside_count != len(cameras) or not remove_inside):
                     sub_sfs = ShapeFromSilhouette(point, self.voxel_size / 2, self.n, self.max_recursion - 1)
                     centers = np.concatenate((centers, sub_sfs.get_voxel_centers(cameras)), axis=1)
         return centers
