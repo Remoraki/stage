@@ -4,7 +4,12 @@ from redistance import redistance
 from scipy.interpolate import griddata
 
 
-def rescale_grids(grids):
+def merge_grids(grids):
+    """
+    Rescale grids on a single same grid containing all of them
+    :param grids: A list of grids to merge
+    :return: A single grid containing all of them
+    """
     bl = grids[0].bottom_left
     tr = grids[0].top_right
     min_x, max_x, min_y, max_y = bl[0], tr[0], bl[1], tr[1]
@@ -18,10 +23,15 @@ def rescale_grids(grids):
 
 
 def rescale_all(forms):
+    """
+    Rescale all forms on a single same grid perfectly scaled
+    :param forms: A list of the forms to rescale
+    :return: A tuple with the rescaled grid and a list of the rescaled forms
+    """
     grids = []
     for form in forms:
         grids.append(form.scaled_grid())
-    grid = rescale_grids(grids)
+    grid = merge_grids(grids)
     for i in range(len(grids)):
         forms[i] = grid.form_interpolation(forms[i].get_coords())
     return grid, forms
@@ -48,9 +58,18 @@ class Grid2D:
         self.shape = self.X.shape
 
     def null_form(self):
+        """
+        Get a zero-initialised form on the grid
+        :return: a GridForm2D
+        """
         return GridForm2D(self, np.zeros(self.shape))
 
     def form(self, values):
+        """
+        Get a form on the grid initialised with certains values
+        :param values: A grid-sized array of values
+        :return: A GridForm2D containing the values
+        """
         return GridForm2D(self, values)
 
     def form_interpolation(self, points, method='linear'):
@@ -85,12 +104,24 @@ class Grid2D:
         return np.sum(values * mask, axis=(0, 1)) * self.dS[0] * self.dS[1]
 
     def rotate(self, form, angle):
+        """
+        Rotate a form with a certain angle
+        :param form: The form to rotate
+        :param angle: The angle of rotation
+        :return: The new form defined by the rotation
+        """
         R = np.array([[np.cos(angle), -np.sin(angle)], [np.sin(angle), np.cos(angle)]])
         coords = form.get_coords()
         rotated_coords = np.matmul(R, coords)
         return self.form_interpolation(rotated_coords)
 
     def translate(self, form, t):
+        """
+        Translate a form with a certain translation
+        :param form: The form to translate
+        :param t: The translation vector
+        :return: The new form defined by the translation
+        """
         coords = form.get_coords()
         translated_coords = coords + t
         return self.form_interpolation(translated_coords)
@@ -133,20 +164,37 @@ class GridForm2D:
         self.sdf = None
 
     def integrate(self, values):
+        """
+        Integrate a function defined by a values grid on the form
+        :param values: A grid-shaped array of values
+        :return: The value of the integral on the shape
+        """
         return self.grid.integrate(self, values)
 
     def get_area(self):
+        """
+        Get the area of the form
+        :return: Area
+        """
         if self.area == 0:
             self.area = self.integrate(self.chi)
         return self.area
 
     def get_barycenter(self):
+        """
+        Get the barycenter of the form
+        :return: Barycenter
+        """
         if self.barycenter is None:
             values = np.stack((self.grid.X, self.grid.Y), axis=-1)
             self.barycenter = self.integrate(values) / self.get_area()
         return self.barycenter
 
     def get_covariance_matrix(self):
+        """
+        Get the covariance matrix of the form
+        :return: Covariance matrix
+        """
         if self.covariance_matrix is None:
             centered_points = np.stack((self.grid.X, self.grid.Y), axis=-1) - self.get_barycenter()
             values = np.einsum('ijk,ijl->ijkl', centered_points, centered_points)
@@ -157,7 +205,7 @@ class GridForm2D:
         """
         Get coordinates of the points of the form
         :param extended: Should the coordinates to be extended with a 1
-        :return: A (2,n) array containing the coordinates
+        :return: A (2/3,n) array containing the coordinates
         """
         points = np.array(np.where(self.chi))
         X = self.grid.X[points[0, :], points[1, :]]
@@ -167,11 +215,20 @@ class GridForm2D:
         return np.vstack((X, Y))
 
     def get_sdf(self, iterations=100):
+        """
+        Get tbe sdf represented by the form
+        :param iterations: The number of iterations with which to calculate the sdf
+        :return: SDF grid-shaped array
+        """
         if self.sdf is None:
             self.sdf = redistance(-self.chi + 0.5, iterations)
         return self.sdf
 
     def scaled_grid(self):
+        """
+        Get a grid scaled on the form perfectly with the same resolution
+        :return: New GridForm2D
+        """
         points = self.get_coords()
         min_x = min(points[0, :]) - self.grid.dS[0]
         max_x = max(points[0, :]) + self.grid.dS[0]
