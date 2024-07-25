@@ -28,12 +28,16 @@ def rescale_all(forms):
     :param forms: A list of the forms to rescale
     :return: A tuple with the rescaled grid and a list of the rescaled forms
     """
-    grids = []
-    for form in forms:
-        grids.append(form.scaled_grid())
+    grids = [form.scaled_grid() for form in forms]
     grid = merge_grids(grids)
-    for i in range(len(grids)):
-        forms[i] = grid.form_interpolation(forms[i].get_coords())
+
+    f = forms[2]
+    c = f.get_coords()
+    nf = grid.form_interpolation(c)
+
+
+
+    forms = [grid.form_interpolation(form.get_coords()) for form in forms]
     return grid, forms
 
 
@@ -77,7 +81,7 @@ class Grid2D:
         Create a grid form from a set of points
         :param method: The interpolation type (nearest, linear or cubic). Nearest can be used when interpolating on a
         lower resolution grid. Linear should be used when interpolating on a higher resolution grid.
-        :param points: a (n,2) array of points
+        :param points: a (2,n) array of points
         :return: A GridForm2D
         """
         if points.ndim != 2 or points.shape[0] != 2:
@@ -103,7 +107,7 @@ class Grid2D:
             dim += 1
         return np.sum(values * mask, axis=(0, 1)) * self.dS[0] * self.dS[1]
 
-    def rotate(self, form, angle):
+    def rotate_from_angle(self, form, angle):
         """
         Rotate a form with a certain angle
         :param form: The form to rotate
@@ -111,8 +115,11 @@ class Grid2D:
         :return: The new form defined by the rotation
         """
         R = np.array([[np.cos(angle), -np.sin(angle)], [np.sin(angle), np.cos(angle)]])
+        return self.rotate(form, R)
+
+    def rotate(self, form, rot):
         coords = form.get_coords()
-        rotated_coords = np.matmul(R, coords)
+        rotated_coords = np.matmul(rot, coords)
         return self.form_interpolation(rotated_coords)
 
     def translate(self, form, t):
@@ -143,9 +150,9 @@ class GridForm2D:
         self.covariance_matrix = None
         self.sdf = None
 
-    def plot_surface(self, ax):
+    def plot_surface(self, ax, title='Characteristic function'):
         ax.plot_surface(self.grid.X, self.grid.Y, self.chi)
-        ax.set_title('Characteristic function')
+        ax.set_title(title)
 
     def plot_sdf(self, ax, iterations=100):
         ax.plot_surface(self.grid.X, self.grid.Y, self.get_sdf(iterations))
@@ -214,6 +221,31 @@ class GridForm2D:
             return np.vstack((X, Y, np.ones_like(X)))
         return np.vstack((X, Y))
 
+    def get_deformed_coords(self, vector_field, dt=0.01, extended=False):
+        """
+        Get the coordinates of the shape deformed via the vector field
+        :param vector_field: The deformation field
+        :param extended: Should the coordinates to be extended with a 1
+        :return: A (2/3,n) array containing the coordinates
+        """
+        points = np.array(np.where(self.chi))
+        X = (self.grid.X + dt * vector_field[:, :, 0])[points[0, :], points[1, :]]
+        Y = (self.grid.Y + dt * vector_field[:, :, 1])[points[0, :], points[1, :]]
+        if extended:
+            return np.vstack((X, Y, np.ones_like(X)))
+        return np.vstack((X, Y))
+
+
+    def deform(self, vector_field, dt=0.01):
+        """
+        Deform the form based on a vector field
+        :param vector_field: A grid-shaped array of 2D vectors
+        :param dt: The length of the time step
+        :return: A new GridForm2D on the same grid
+        """
+        coords = self.get_deformed_coords(vector_field, dt)
+        return self.grid.form_interpolation(coords)
+
     def get_sdf(self, iterations=100):
         """
         Get tbe sdf represented by the form
@@ -236,6 +268,19 @@ class GridForm2D:
         max_y = max(points[1, :]) + self.grid.dS[1]
         grid = Grid2D((min_x, min_y), (max_x, max_y), self.grid.resolution)
         return grid
+
+    def rescale(self):
+        grid = self.scaled_grid()
+        nf = grid.form_interpolation(self.get_coords())
+        return nf, grid
+
+    def print_box(self):
+        points = self.get_coords()
+        min_x = min(points[0, :]) - self.grid.dS[0]
+        max_x = max(points[0, :]) + self.grid.dS[0]
+        min_y = min(points[1, :]) - self.grid.dS[1]
+        max_y = max(points[1, :]) + self.grid.dS[1]
+        print(min_x, min_y, max_x, max_y)
 
 
 
