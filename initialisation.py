@@ -57,7 +57,7 @@ def initial_transformation(A: GridForm2D, B: GridForm2D):
 
 if __name__ == '__main__':
     # Init
-    grid, A0, B = create_grid_and_functions(res=50)
+    grid, A0, B = create_grid_and_functions(res=100)
     G = initial_transformation(A0, B)
     A = A0.similarity(G)
     # Save

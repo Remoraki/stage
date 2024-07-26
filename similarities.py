@@ -58,3 +58,24 @@ if __name__ == '__main__':
     plot_form_surface(A2, 'A2')
     plot_form_surface(A3, 'A3')
     plt.show()
+
+
+
+# Plotting
+fig0 = plt.figure()
+fig0.suptitle('Vector field decomposition')
+ax0 = plt.subplot(231, projection='3d')
+ax0.plot_surface(grid.X, grid.Y, sym_diff)
+ax0.set_title('Soft symmetrical difference')
+ax1 = plt.subplot(232, projection='3d')
+ax1.plot_surface(grid.X, grid.Y, sym_diff * delta_phi_A)
+ax1.set_title('Soft heaviside derivative component')
+ax2 = plt.subplot(233, projection='3d')
+ax2.plot_surface(grid.X, grid.Y, np.linalg.norm(sym_diff[:, :, np.newaxis] * grad_phi_A, axis=-1))
+ax2.set_title('Sdf gradient norm component')
+ax3 = plt.subplot(234)
+ax3.quiver(grid.X, grid.Y, step[:, :, 0], step[:, :, 1])
+ax3.set_title('Vector field')
+ax4 = plt.subplot(235, projection='3d')
+ax4.plot_surface(grid.X, grid.Y, np.linalg.norm(step, axis=-1))
+ax4.set_title('Vector field norm')

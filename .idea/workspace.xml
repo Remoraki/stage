@@ -4,13 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eb26c681-7293-4ded-8906-9fff2700706d" name="Changes" comment="save pre cleaning">
+    <list default="true" id="eb26c681-7293-4ded-8906-9fff2700706d" name="Changes" comment="save mid cleaning">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/grids.py" beforeDir="false" afterPath="$PROJECT_DIR$/grids.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/initialisation.py" beforeDir="false" afterPath="$PROJECT_DIR$/initialisation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/optimisation.py" beforeDir="false" afterPath="$PROJECT_DIR$/optimisation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/similarities.py" beforeDir="false" afterPath="$PROJECT_DIR$/similarities.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -95,7 +93,7 @@
       <recent name="C:\Users\gagag\PycharmProjects\stage" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.initialisation">
+  <component name="RunManager" selected="Python.optimisation">
     <configuration name="initialisation" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="stage" />
       <option name="ENV_FILES" value="" />
@@ -110,7 +108,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="C:\Users\gagag\PycharmProjects\stage\initialisation.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/initialisation.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -190,10 +188,10 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.optimisation" />
         <item itemvalue="Python.initialisation" />
         <item itemvalue="Python.similarities" />
         <item itemvalue="Python.utils" />
-        <item itemvalue="Python.optimisation" />
       </list>
     </recent_temporary>
   </component>
@@ -238,7 +236,7 @@
       <workItem from="1721892369974" duration="4895000" />
       <workItem from="1721897353348" duration="7015000" />
       <workItem from="1721905565951" duration="16056000" />
-      <workItem from="1721978904683" duration="6151000" />
+      <workItem from="1721978904683" duration="10402000" />
     </task>
     <task id="LOCAL-00001" summary="init commit">
       <option name="closed" value="true" />
@@ -384,7 +382,15 @@
       <option name="project" value="LOCAL" />
       <updated>1721979246574</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="save mid cleaning">
+      <option name="closed" value="true" />
+      <created>1721985377084</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1721985377084</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -405,7 +411,8 @@
     <MESSAGE value="comments" />
     <MESSAGE value="save pre interpolation fix" />
     <MESSAGE value="save pre cleaning" />
-    <option name="LAST_COMMIT_MESSAGE" value="save pre cleaning" />
+    <MESSAGE value="save mid cleaning" />
+    <option name="LAST_COMMIT_MESSAGE" value="save mid cleaning" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -443,7 +450,7 @@
     <SUITE FILE_PATH="coverage/stage$main.coverage" NAME="main Coverage Results" MODIFIED="1721390320692" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$SDF_3D.coverage" NAME="SDF_3D Coverage Results" MODIFIED="1721632982675" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$ChanVese.coverage" NAME="ChanVese Coverage Results" MODIFIED="1721812867170" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Levelsets" />
-    <SUITE FILE_PATH="coverage/stage$optimisation.coverage" NAME="optimisation Coverage Results" MODIFIED="1721921716800" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/stage$optimisation.coverage" NAME="optimisation Coverage Results" MODIFIED="1721988851486" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$rasterization__1_.coverage" NAME="rasterization (1) Coverage Results" MODIFIED="1720424220034" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$shapes.coverage" NAME="shapes Coverage Results" MODIFIED="1720096615446" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$similarities.coverage" NAME="similarities Coverage Results" MODIFIED="1721922618161" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -455,6 +462,6 @@
     <SUITE FILE_PATH="coverage/stage$retroprojection_test__1_.coverage" NAME="retroprojection_test (1) Coverage Results" MODIFIED="1720515119592" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$loader.coverage" NAME="loader Coverage Results" MODIFIED="1721921984981" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$retroprojection.coverage" NAME="retroprojection_test Coverage Results" MODIFIED="1720516083079" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/stage$initialisation.coverage" NAME="initialisation Coverage Results" MODIFIED="1721985107777" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/stage$initialisation.coverage" NAME="initialisation Coverage Results" MODIFIED="1721988817650" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
