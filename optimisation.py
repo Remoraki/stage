@@ -2,6 +2,12 @@ from grids import *
 import numpy as np
 import matplotlib.pyplot as plt
 from findiffs import *
+from utils import *
+
+
+"""
+Do one optimisation step
+"""
 
 
 def soft_heaviside(x, epsilon=0.1):
@@ -13,15 +19,13 @@ def soft_delta(x, epsilon=0.1):
 
 
 # Loading the forms
-grid_info = np.load('grid.npy', allow_pickle=True).item()
-grid = Grid2D(grid_info['bl'], grid_info['tr'], grid_info['res'])
-A = grid.form(np.load('A.npy'))
-B = grid.form(np.load('B.npy'))
+grid, A, B = load()
 
 # Constants
 heaviside_eps = 0.5
-sdf_iter = 500
-descent_step = 0.01
+sdf_iter = 100
+descent_step = 0.1
+save = False
 
 # Symmetrical difference
 phi_A = A.get_sdf(sdf_iter)
@@ -39,7 +43,7 @@ grad_phi_A_y = (fdiff_y(phi_A) - bdiff_y(phi_A)) / (2 * grid.dS[1])
 grad_phi_A = np.stack((grad_phi_A_x, grad_phi_A_y), axis=-1)
 
 # Descent direction
-step = sym_diff[:, :, np.newaxis] * delta_phi_A[:, :, np.newaxis] * grad_phi_A
+step = -sym_diff[:, :, np.newaxis] * delta_phi_A[:, :, np.newaxis] * grad_phi_A
 
 # Deformation
 GA = A.deform(step, descent_step)
@@ -48,6 +52,7 @@ chi_GA = soft_heaviside(-phi_GA, heaviside_eps)
 sym_diff_G = chi_GA - chi_B
 
 
+# Plotting
 fig0 = plt.figure()
 fig0.suptitle('Vector field decomposition')
 ax0 = plt.subplot(231, projection='3d')
@@ -66,8 +71,6 @@ ax4 = plt.subplot(235, projection='3d')
 ax4.plot_surface(grid.X, grid.Y, np.linalg.norm(step, axis=-1))
 ax4.set_title('Vector field norm')
 
-grid, [A, GA, B] = rescale_all([A, GA, B])
-
 fig1 = plt.figure()
 fig1.suptitle('Shape deformation')
 ax5 = plt.subplot(131, projection='3d')
@@ -77,10 +80,29 @@ GA.plot_surface(ax6, 'Deformed shape')
 ax7 = plt.subplot(133, projection='3d')
 B.plot_surface(ax7, 'Target shape')
 
+fig2 = plt.figure()
+fig2.suptitle('Level sets')
+ax8 = plt.subplot(131, projection='3d')
+A.plot_sdf(ax8, title='Original shape')
+ax9 = plt.subplot(132, projection='3d')
+GA.plot_sdf(ax9, title='Transformed shape')
+ax10 = plt.subplot(133, projection='3d')
+B.plot_sdf(ax10, title='Target shape')
 
-print('Sym diff before deformation : ' + str(np.sum(np.abs(sym_diff))))
-print('Sym diff after deformation : ' + str(np.sum(np.abs(sym_diff_G))))
-np.save('A', GA.chi)
+
+# Result
+sym_diff2 = grid.integrate(np.square(A.chi - B.chi))
+sym_diff2_G = grid.integrate(np.square(GA.chi - B.chi))
+
+
+print('Sym diff before deformation : ' + str(sym_diff2))
+print('Sym diff after deformation : ' + str(sym_diff2_G))
+
+if save:
+    np.save('B', B.chi)
+    np.save('A', GA.chi)
+    grid_dic = {'res': grid.resolution, 'bl': grid.bottom_left, 'tr': grid.top_right}
+    np.save('grid', grid_dic, True)
 
 plt.show()
 
