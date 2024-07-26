@@ -1,6 +1,6 @@
 from grids import *
 import numpy as np
-from utils import load, plot
+from utils import load_current, plot_form_surface
 
 
 def invG(G):
@@ -47,14 +47,14 @@ if __name__ == '__main__':
     sim = Similarity2D(G)
     sim2 = sim.o(sim)
 
-    _, A, B = load()
+    _, A, B = load_current()
     A1 = sim(A)
     A2 = sim(A1)
     A3 = sim2(A)
 
     _, [A, A1, A2, A3] = rescale_all([A, A1, A2, A3], 0.1,True)
-    plot(A, 'A')
-    plot(A1, 'A1')
-    plot(A2, 'A2')
-    plot(A3, 'A3')
+    plot_form_surface(A, 'A')
+    plot_form_surface(A1, 'A1')
+    plot_form_surface(A2, 'A2')
+    plot_form_surface(A3, 'A3')
     plt.show()

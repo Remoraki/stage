@@ -19,7 +19,7 @@ def soft_delta(x, epsilon=0.1):
 
 
 # Loading the forms
-grid, A, B = load()
+grid, A, B = load_current()
 
 # Constants
 heaviside_eps = 0.5
@@ -83,11 +83,11 @@ B.plot_surface(ax7, 'Target shape')
 fig2 = plt.figure()
 fig2.suptitle('Level sets')
 ax8 = plt.subplot(131, projection='3d')
-A.plot_sdf(ax8, title='Original shape')
+A.plot_sdf_surface(ax8, title='Original shape')
 ax9 = plt.subplot(132, projection='3d')
-GA.plot_sdf(ax9, title='Transformed shape')
+GA.plot_sdf_surface(ax9, title='Transformed shape')
 ax10 = plt.subplot(133, projection='3d')
-B.plot_sdf(ax10, title='Target shape')
+B.plot_sdf_surface(ax10, title='Target shape')
 
 
 # Result
