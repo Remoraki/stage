@@ -1,6 +1,9 @@
 from grids import *
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
+from grids import *
+from typing import List
 
 
 def save_init(A0: GridForm2D):
@@ -15,7 +18,7 @@ def save_init(A0: GridForm2D):
     np.save('grid', grid_dic, True)
 
 
-def save_current(A: GridForm2D, B: GridForm2D=None, border_width=0.2, square_output=True):
+def save_current(A: GridForm2D, B: GridForm2D = None, border_width=0.2, square_output=True):
     """
     Save the current state of the model, the target shape and the grid. B is optional and should not be given as
     argument unless A and B are not defined on the same grid anymore, or if you need to rescale them.
@@ -49,7 +52,7 @@ def load_current(load_all=False):
         return A
 
 
-def plot_form_surface(form: GridForm2D, title='form', scaled=False, squared_scale=True):
+def plot_form_surface(form: GridForm2D, title='form', scaled=False, squared_scale=True, fig=None):
     """
     Plot the form with a surface plot
     :param form: GridForm2D
@@ -58,7 +61,8 @@ def plot_form_surface(form: GridForm2D, title='form', scaled=False, squared_scal
     :param squared_scale: In case of rescaling, should it be squared
     :return:
     """
-    fig = plt.figure()
+    if fig is None:
+        fig = plt.figure()
     fig.suptitle(title)
     ax0 = plt.subplot(121, projection='3d')
     ax1 = plt.subplot(122, projection='3d')
@@ -70,7 +74,7 @@ def plot_form_surface(form: GridForm2D, title='form', scaled=False, squared_scal
     f.plot_sdf_surface(ax1, title='Phi')
 
 
-def plot_form_contour(form: GridForm2D, title='form', color='red', scaled=False, squared_scale=True):
+def plot_form_contour(form: GridForm2D, title='form', color='red', scaled=False, squared_scale=True, fig=None):
     """
     Plot the form with a contour plot
     :param form: GridForm2D
@@ -80,7 +84,8 @@ def plot_form_contour(form: GridForm2D, title='form', color='red', scaled=False,
     :param squared_scale: In case of rescaling, should it be squared
     :return:
     """
-    fig = plt.figure()
+    if fig is None:
+        fig = plt.figure()
     fig.suptitle(title)
     ax = plt.subplot(121)
     ax2 = plt.subplot(122)
@@ -91,3 +96,5 @@ def plot_form_contour(form: GridForm2D, title='form', color='red', scaled=False,
     f.plot_contour(ax, color=color)
     f.plot_sdf_im(ax2)
     ax2.invert_yaxis()
+
+

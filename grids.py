@@ -118,6 +118,14 @@ class Grid2D:
             dim += 1
         return np.sum(values * mask, axis=(0, 1)) * self.dS[0] * self.dS[1]
 
+    def flatten(self, extended=False):
+        X = self.X.flatten()
+        Y = self.Y.flatten()
+        if not extended:
+            return np.vstack((X, Y))
+        else:
+            return np.vstack((X, Y, np.ones_like(X)))
+
 
 class GridForm2D:
     def __init__(self, grid: 'Grid2D', chi):
@@ -234,7 +242,9 @@ class GridForm2D:
         Get the flattened values defining the form
         :return: A 3-tuple of (1,n) arrays (X,Y,Chi)
         """
-        return np.vstack((self.grid.X.flatten()[np.newaxis, :], self.grid.Y.flatten()[np.newaxis, :], self.chi.flatten()[np.newaxis, :]))
+        return np.vstack((self.grid.X.flatten()[np.newaxis, :],
+                          self.grid.Y.flatten()[np.newaxis, :],
+                          self.chi.flatten()[np.newaxis, :]))
 
     def similarity(self, G):
         """

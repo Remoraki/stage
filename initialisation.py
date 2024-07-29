@@ -10,20 +10,27 @@ Script that initialise a model shape and a target shape, and proceed to its alig
 """
 
 
-def create_grid_and_functions(res=100):
+def create_grid_and_functions(AFunc, BFunc, grid_size=1, res=(100, 100)):
     """
     Create a grid and the model and target shapes. Not a generic function, only here to initialise shapes
+    :param AFunc: The characteristic function of A : (X,Y) -> Chi
+    :param BFunc: The characteristic function of B : (X,Y) -> Chi
+    :param grid_size: The size of the grid
     :param res: The resolution of the grid
     :return: grid:Grid2D, A:GridForm2D, B:GridForm2D
     """
-    grid = Grid2D([-2, -2], [2, 2], [res, res])
-    B_chi = np.logical_and(grid.X + 0.2 < 0.5 * (grid.Y + 0 / 5), (grid.X + 0.2) ** 2 < 0.1).astype(float)
-    A_chi = np.logical_and(np.abs(grid.X) < 0.4, np.abs(grid.Y) < 1.6).astype(float)
-    B = grid.form(B_chi)
-    alpha = np.pi/6
-    G = np.array([[np.cos(alpha), -np.sin(alpha), 0.5], [np.sin(alpha), np.cos(alpha), 0]])
-    B = B.similarity(G)
+    grid = Grid2D([-grid_size, -grid_size], [grid_size, grid_size], res)
+    A_chi = AFunc(grid.X, grid.Y)
+    B_chi = BFunc(grid.X, grid.Y)
     A = grid.form(A_chi)
+    B = grid.form(B_chi)
+    return grid, A, B
+
+
+def create_grids(AGrid, BGrid, grid_size=1, res=100):
+    grid = Grid2D([-grid_size, -grid_size], [grid_size, grid_size], [res, res])
+    A = grid.form(AGrid)
+    B = grid.form(BGrid)
     return grid, A, B
 
 
@@ -55,17 +62,8 @@ def initial_transformation(A: GridForm2D, B: GridForm2D):
     return GAB # It's a me, GAB
 
 
-if __name__ == '__main__':
-    # Init
-    grid, A0, B = create_grid_and_functions(res=100)
+def initialise(A0: GridForm2D, B: GridForm2D):
     G = initial_transformation(A0, B)
     A = A0.similarity(G)
-    # Save
-    save_init(A0)
-    save_current(A, B)
-    # Plot
-    plot_form_contour(A0, 'A0')
-    plot_form_contour(A, 'A1')
-    plot_form_contour(B, 'B')
-    plt.show()
-
+    grid, [A, B] = rescale_all([A, B], 0.2, True)
+    return grid, A, B
