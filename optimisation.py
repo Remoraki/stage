@@ -62,40 +62,40 @@ def plot_vector_field(X, Y, V):
     ax1.set_title('Vector field norm')
 
 
-def gram_matrix2d(shape: 'GridForm2D', chi):
+def gram_matrix2d(shape: 'GridForm2D'):
     grid = shape.grid
     X = grid.X
     Y = grid.Y
-
+    m = soft_delta(shape.get_sdf())
     X2_plus_Y2 = X ** 2 + Y ** 2
 
     g = np.zeros((grid.shape[0], grid.shape[1], 4, 4))
 
-    g[:, :, 0, 0] = chi * X2_plus_Y2
+    g[:, :, 0, 0] = m * X2_plus_Y2
     g[:, :, 0, 1] = 0
-    g[:, :, 0, 2] = chi * X
-    g[:, :, 0, 3] = chi * Y
+    g[:, :, 0, 2] = m * X
+    g[:, :, 0, 3] = m * Y
 
     g[:, :, 1, 0] = 0
-    g[:, :, 1, 1] = chi * X2_plus_Y2
-    g[:, :, 1, 2] = -chi * Y
-    g[:, :, 1, 3] = chi * X
+    g[:, :, 1, 1] = m * X2_plus_Y2
+    g[:, :, 1, 2] = -m * Y
+    g[:, :, 1, 3] = m * X
 
-    g[:, :, 2, 0] = chi * X
-    g[:, :, 2, 1] = -chi * Y
-    g[:, :, 2, 2] = chi
+    g[:, :, 2, 0] = m * X
+    g[:, :, 2, 1] = -m * Y
+    g[:, :, 2, 2] = m
     g[:, :, 2, 3] = 0
 
-    g[:, :, 3, 0] = chi * Y
-    g[:, :, 3, 1] = chi * X
+    g[:, :, 3, 0] = m * Y
+    g[:, :, 3, 1] = m * X
     g[:, :, 3, 2] = 0
-    g[:, :, 3, 3] = chi
+    g[:, :, 3, 3] = m
 
     return grid.integrate(g)
 
 
-def similarity_projection2d(A: GridForm2D, chi_A, v):
-    Gram = gram_matrix2d(A, chi_A)
+def similarity_projection2d(A: GridForm2D, v):
+    Gram = gram_matrix2d(A)
     Gram_inv = np.linalg.inv(Gram)
     grid = A.grid
     X = grid.X
@@ -109,7 +109,7 @@ def similarity_projection2d(A: GridForm2D, chi_A, v):
     # vectors scalar product (4,n,m)
     s = np.einsum('ijlm,kijml->kij', v[:, :, np.newaxis, :], B[:, :, :, :, np.newaxis])
     # vector fields scalar product (integral of vectors scalar product):(4)
-    s = np.array([grid.integrate(s[i] * chi_A) for i in range(len(s))])
+    s = np.array([grid.integrate(s[i] * soft_delta(A.get_sdf())) for i in range(len(s))])
     # projection coordinates system solving
     lbda = np.matmul(Gram_inv, s)
     sigma = lbda[0] * np.eye(2)
@@ -139,7 +139,7 @@ def step(A: GridForm2D, B: GridForm2D, heaviside_eps=0.5, sdf_iter=100, descent_
     delta_phi_A = soft_delta(-phi_A, heaviside_eps)
     deform_field = -chi_diff[:, :, np.newaxis] * delta_phi_A[:, :, np.newaxis] * grad_phi_A
     # Projecting the vector field on the similarities space
-    dG = similarity_projection2d(A, chi_A, deform_field)
+    dG = similarity_projection2d(A, deform_field)
     G = expm(descent_step * dG)
     # Computing the transformed shape
     GA = A.similarity(G)
