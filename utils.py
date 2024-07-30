@@ -52,26 +52,44 @@ def load_current(load_all=False):
         return A
 
 
-def plot_form_surface(form: GridForm2D, title='form', scaled=False, squared_scale=True, fig=None):
-    """
-    Plot the form with a surface plot
-    :param form: GridForm2D
-    :param title: The title of the plot
-    :param scaled: Should the plot be scaled to the form or respect the form grid
-    :param squared_scale: In case of rescaling, should it be squared
-    :return:
-    """
-    if fig is None:
-        fig = plt.figure()
-    fig.suptitle(title)
-    ax0 = plt.subplot(121, projection='3d')
-    ax1 = plt.subplot(122, projection='3d')
-    if scaled:
-        f, _ = form.rescale(squared_scale)
-    else:
-        f = form
-    f.plot_surface(ax0, title='Chi')
-    f.plot_sdf_surface(ax1, title='Phi')
+class Drawer:
+    def __init__(self, grid, fig, index):
+        plt.ion()
+        self.fig = fig
+        self.ax = plt.subplot(index)
+        self.grid = grid
+
+
+class ContourDrawer(Drawer):
+    def draw(self, A, B):
+        grid = self.grid
+        ax = self.ax
+        ax.clear()
+        ax.contour(grid.X, grid.Y, A.chi, levels=[0.5], colors='red')
+        ax.contour(grid.X, grid.Y, B.chi, levels=[0.5], colors='blue')
+        plt.draw()
+        plt.pause(0.1)
+
+
+class VectorFieldDrawer(Drawer):
+    def draw(self, v):
+        grid = self.grid
+        ax = self.ax
+        ax.clear()
+        ax.quiver(grid.X, grid.Y, v[:, :, 0], v[:, :, 1])
+        plt.draw()
+        plt.pause(0.1)
+
+
+class ScalarFieldDrawer(Drawer):
+    def draw(self, s):
+        grid = self.grid
+        ax = self.ax
+        ax.clear()
+        ax.imshow(s)
+        ax.invert_yaxis()
+        plt.draw()
+        plt.pause(0.1)
 
 
 def plot_form_contour(form: GridForm2D, title='form', color='red', scaled=False, squared_scale=True, fig=None):

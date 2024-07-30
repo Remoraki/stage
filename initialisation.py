@@ -12,7 +12,7 @@ Script that initialise a model shape and a target shape, and proceed to its alig
 
 def create_grid_and_functions(AFunc, BFunc, grid_size=1, res=(100, 100)):
     """
-    Create a grid and the model and target shapes. Not a generic function, only here to initialise shapes
+    Create a grid and the model and target shapes.
     :param AFunc: The characteristic function of A : (X,Y) -> Chi
     :param BFunc: The characteristic function of B : (X,Y) -> Chi
     :param grid_size: The size of the grid
@@ -62,8 +62,18 @@ def initial_transformation(A: GridForm2D, B: GridForm2D):
     return GAB # It's a me, GAB
 
 
-def initialise(A0: GridForm2D, B: GridForm2D):
-    G = initial_transformation(A0, B)
-    A = A0.similarity(G)
-    grid, [A, B] = rescale_all([A, B], 0.2, True)
+def initialise(A0: GridForm2D, B: GridForm2D, align=True):
+    """
+    Initialise shapes
+    :param A0:
+    :param B:
+    :param align: True if the moments of the shape should be aligned
+    :return:
+    """
+    if align:
+        G = initial_transformation(A0, B)
+        A = A0.similarity(G)
+    else:
+        A = A0
+    grid, [A, B] = rescale_all([A, B], 0.1, True)
     return grid, A, B

@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eb26c681-7293-4ded-8906-9fff2700706d" name="Changes" comment="projection not working">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/optimisation.py" beforeDir="false" afterPath="$PROJECT_DIR$/optimisation.py" afterDir="false" />
+    <list default="true" id="eb26c681-7293-4ded-8906-9fff2700706d" name="Changes" comment="projection still not working">
+      <change beforePath="$PROJECT_DIR$/shape_alignement.py" beforeDir="false" afterPath="$PROJECT_DIR$/shape_alignement.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,43 +49,43 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.ChanVese.executor&quot;: &quot;Run&quot;,
-    &quot;Python.SDF_3D.executor&quot;: &quot;Run&quot;,
-    &quot;Python.SimpleGAC.executor&quot;: &quot;Run&quot;,
-    &quot;Python.image_shape_from_silhouette.executor&quot;: &quot;Run&quot;,
-    &quot;Python.initialisation (1).executor&quot;: &quot;Run&quot;,
-    &quot;Python.initialisation.executor&quot;: &quot;Run&quot;,
-    &quot;Python.loader.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.multi_resolution.executor&quot;: &quot;Run&quot;,
-    &quot;Python.optimisation.executor&quot;: &quot;Run&quot;,
-    &quot;Python.rasterization (1).executor&quot;: &quot;Run&quot;,
-    &quot;Python.rasterization.executor&quot;: &quot;Run&quot;,
-    &quot;Python.redistance.executor&quot;: &quot;Run&quot;,
-    &quot;Python.retroprojection.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.retroprojection_test (1).executor&quot;: &quot;Run&quot;,
-    &quot;Python.retroprojection_test.executor&quot;: &quot;Run&quot;,
-    &quot;Python.shape_alignement.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.shapes.executor&quot;: &quot;Run&quot;,
-    &quot;Python.similarities.executor&quot;: &quot;Run&quot;,
-    &quot;Python.temp.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/gagag/PycharmProjects/stage&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;PyScientificConfigurable&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.ChanVese.executor": "Run",
+    "Python.SDF_3D.executor": "Run",
+    "Python.SimpleGAC.executor": "Run",
+    "Python.image_shape_from_silhouette.executor": "Run",
+    "Python.initialisation (1).executor": "Run",
+    "Python.initialisation.executor": "Run",
+    "Python.loader.executor": "Run",
+    "Python.main.executor": "Debug",
+    "Python.multi_resolution.executor": "Run",
+    "Python.optimisation.executor": "Run",
+    "Python.rasterization (1).executor": "Run",
+    "Python.rasterization.executor": "Run",
+    "Python.redistance.executor": "Run",
+    "Python.retroprojection.executor": "Debug",
+    "Python.retroprojection_test (1).executor": "Run",
+    "Python.retroprojection_test.executor": "Run",
+    "Python.shape_alignement.executor": "Run",
+    "Python.shapes.executor": "Run",
+    "Python.similarities.executor": "Run",
+    "Python.temp.executor": "Run",
+    "Python.test.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/gagag/PycharmProjects/stage",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "PyScientificConfigurable",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\gagag\PycharmProjects\stage" />
@@ -261,7 +260,7 @@
       <workItem from="1721905565951" duration="16056000" />
       <workItem from="1721978904683" duration="16833000" />
       <workItem from="1722238520359" duration="24496000" />
-      <workItem from="1722324722270" duration="894000" />
+      <workItem from="1722324722270" duration="16325000" />
     </task>
     <task id="LOCAL-00001" summary="init commit">
       <option name="closed" value="true" />
@@ -431,7 +430,23 @@
       <option name="project" value="LOCAL" />
       <updated>1722266786716</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="save">
+      <option name="closed" value="true" />
+      <created>1722325873990</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1722325873990</updated>
+    </task>
+    <task id="LOCAL-00023" summary="projection still not working">
+      <option name="closed" value="true" />
+      <created>1722346958755</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1722346958755</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -455,7 +470,9 @@
     <MESSAGE value="save mid cleaning" />
     <MESSAGE value="cleaned" />
     <MESSAGE value="projection not working" />
-    <option name="LAST_COMMIT_MESSAGE" value="projection not working" />
+    <MESSAGE value="save" />
+    <MESSAGE value="projection still not working" />
+    <option name="LAST_COMMIT_MESSAGE" value="projection still not working" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -469,11 +486,6 @@
           <url>file://$PROJECT_DIR$/redistance.py</url>
           <line>209</line>
           <option name="timeStamp" value="150" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/optimisation.py</url>
-          <line>147</line>
-          <option name="timeStamp" value="174" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -492,7 +504,7 @@
     <SUITE FILE_PATH="coverage/stage$rasterization.coverage" NAME="rasterization Coverage Results" MODIFIED="1720530608195" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$main.coverage" NAME="main Coverage Results" MODIFIED="1721390320692" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$SDF_3D.coverage" NAME="SDF_3D Coverage Results" MODIFIED="1721632982675" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/stage$shape_alignement.coverage" NAME="shape_alignement Coverage Results" MODIFIED="1722267516366" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/stage$shape_alignement.coverage" NAME="shape_alignement Coverage Results" MODIFIED="1722347087748" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$ChanVese.coverage" NAME="ChanVese Coverage Results" MODIFIED="1721812867170" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Levelsets" />
     <SUITE FILE_PATH="coverage/stage$optimisation.coverage" NAME="optimisation Coverage Results" MODIFIED="1721994322696" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$rasterization__1_.coverage" NAME="rasterization (1) Coverage Results" MODIFIED="1720424220034" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

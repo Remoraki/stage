@@ -32,6 +32,7 @@ def chi_funcs(A: GridForm2D, B: GridForm2D, heaviside_eps=0.5, sdf_iter=100, ):
     chi_B = soft_heaviside(-phi_B, heaviside_eps)
     return chi_A, chi_B
 
+
 def sym_diff(grid, chi_A, chi_B):
     return grid.integrate(np.square(chi_A-chi_B))
 
@@ -62,11 +63,16 @@ def plot_vector_field(X, Y, V):
     ax1.set_title('Vector field norm')
 
 
-def gram_matrix2d(shape: 'GridForm2D'):
+def gram_matrix2d(shape: 'GridForm2D', heaviside_eps):
+    """
+    Get the gram matrix corresponding to a 2D shape similarity space
+    :param shape: The shape to compute the gram matrix from: GridForm2D
+    :return: The 2d gram matrix (4,4)
+    """
     grid = shape.grid
     X = grid.X
     Y = grid.Y
-    m = soft_delta(shape.get_sdf())
+    m = soft_delta(shape.get_sdf(), heaviside_eps)
     X2_plus_Y2 = X ** 2 + Y ** 2
 
     g = np.zeros((grid.shape[0], grid.shape[1], 4, 4))
@@ -94,8 +100,15 @@ def gram_matrix2d(shape: 'GridForm2D'):
     return grid.integrate(g)
 
 
-def similarity_projection2d(A: GridForm2D, v):
-    Gram = gram_matrix2d(A)
+def similarity_projection2d(A: GridForm2D, v, heaviside_eps):
+    """
+    Project a vector field on a 2d shape similarity space
+    :param A: The shape
+    :param v: The vector field
+    :param heaviside_eps: The epsilon for heaviside calculations
+    :return: The infinitesimal similarity, result of the projection
+    """
+    Gram = gram_matrix2d(A, heaviside_eps)
     Gram_inv = np.linalg.inv(Gram)
     grid = A.grid
     X = grid.X
@@ -109,7 +122,7 @@ def similarity_projection2d(A: GridForm2D, v):
     # vectors scalar product (4,n,m)
     s = np.einsum('ijlm,kijml->kij', v[:, :, np.newaxis, :], B[:, :, :, :, np.newaxis])
     # vector fields scalar product (integral of vectors scalar product):(4)
-    s = np.array([grid.integrate(s[i] * soft_delta(A.get_sdf())) for i in range(len(s))])
+    s = np.array([grid.integrate(s[i] * soft_delta(A.get_sdf(), heaviside_eps)) for i in range(len(s))])
     # projection coordinates system solving
     lbda = np.matmul(Gram_inv, s)
     sigma = lbda[0] * np.eye(2)
@@ -121,7 +134,41 @@ def similarity_projection2d(A: GridForm2D, v):
     return dG
 
 
-def step(A: GridForm2D, B: GridForm2D, heaviside_eps=0.5, sdf_iter=100, descent_step=0.1):
+def similarity_projection2d_adj(A: GridForm2D, v, heaviside_eps):
+    grid = A.grid
+    X = grid.X
+    Y = grid.Y
+    # Similarity space decomposition on the grid
+    # B:(4,n,m,2) v:(n,m,2)
+    B = np.array([np.transpose([X, Y]),
+                  np.transpose([-Y, X])])
+    # vectors scalar product (4,n,m)
+    s = np.einsum('ijlm,kijml->kij', v[:, :, np.newaxis, :], B[:, :, :, :, np.newaxis])
+    p = soft_delta(-A.get_sdf(), heaviside_eps)
+    tau = grid.integrate(p * s[0]) * np.array([[1, 0], [0, 1]])
+    zeta = grid.integrate(p * s[1]) * np.array([[0, -1], [1, 0]])
+    omega = grid.integrate(p[:, :, np.newaxis] * v)
+
+    dG = np.hstack((tau + zeta, omega[:, np.newaxis]))
+    dG = np.vstack((dG, [0, 0, 0]))
+    return dG
+
+
+def optimal_vector_field(A: GridForm2D, B: GridForm2D, heaviside_eps=0.5, sdf_iter=100, drawers=None):
+    chi_A, chi_B = chi_funcs(A, B, heaviside_eps, sdf_iter)
+    chi_diff = chi_A - chi_B
+    phi_A = A.get_sdf(sdf_iter)
+    grad_phi_A = sdf_gradient(A, sdf_iter)
+    delta_phi_A = soft_delta(-phi_A, heaviside_eps)
+    deform_field = -chi_diff[:, :, np.newaxis] * delta_phi_A[:, :, np.newaxis] * grad_phi_A
+    if drawers is not None:
+        for drawer in drawers:
+            if isinstance(drawer, VectorFieldDrawer):
+                drawer.draw(deform_field * soft_delta(A.get_sdf())[:, :, np.newaxis])
+    return deform_field
+
+
+def step(A: GridForm2D, B: GridForm2D, heaviside_eps=0.5, sdf_iter=100, descent_step=0.1, drawers=None):
     """
     Perform one optimisation step
     :param A: The model shape
@@ -132,48 +179,55 @@ def step(A: GridForm2D, B: GridForm2D, heaviside_eps=0.5, sdf_iter=100, descent_
     :return: The deformed shape
     """
     # Optimal vector field computation
+    deform_field = optimal_vector_field(A, B, heaviside_eps, sdf_iter, drawers)
     chi_A, chi_B = chi_funcs(A, B, heaviside_eps, sdf_iter)
-    chi_diff = chi_A - chi_B
-    phi_A = A.get_sdf(sdf_iter)
-    grad_phi_A = sdf_gradient(A, sdf_iter)
-    delta_phi_A = soft_delta(-phi_A, heaviside_eps)
-    deform_field = -chi_diff[:, :, np.newaxis] * delta_phi_A[:, :, np.newaxis] * grad_phi_A
     # Projecting the vector field on the similarities space
-    dG = similarity_projection2d(A, deform_field)
+    dG = similarity_projection2d_adj(A, deform_field, heaviside_eps)
     G = expm(descent_step * dG)
     # Computing the transformed shape
     GA = A.similarity(G)
+    GA = A.deform(deform_field)
     print('Sym diff : ' + str(sym_diff(A.grid, chi_A, chi_B)))
-    print(G)
     return GA, G
 
 
-def optimise(grid: Grid2D, A: GridForm2D, B: GridForm2D, nb_iter, heaviside_eps=0.5, sdf_iter=100, descent_step=0.2):
-    plt.ion()
-    fig = plt.figure()
-    ax = plt.subplot()
+def optimise(grid: Grid2D, A: GridForm2D, B: GridForm2D, nb_iter, heaviside_eps=0.5, sdf_iter=100, descent_step=0.2, deform=False):
+    if deform:
+        return optimise_deform(grid, A, B, nb_iter, heaviside_eps, sdf_iter, descent_step)
+    else:
+        return optimise_no_deform(grid, A, B, nb_iter, heaviside_eps, sdf_iter, descent_step)
+
+
+def optimise_no_deform(grid: Grid2D, A: GridForm2D, B: GridForm2D, nb_iter, heaviside_eps=0.5, sdf_iter=100, descent_step=0.2):
+    fig = plt.figure(figsize=(16, 8))
+    c_drawer = ContourDrawer(grid, fig, 121)
+    vf_drawer = VectorFieldDrawer(grid, fig, 122)
+    drawers = [c_drawer, vf_drawer]
     G = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
     GA = A
     for i in range(nb_iter):
+        fig.suptitle('Iteration ' + str(i))
         GA = A.similarity(G)
-        ax.clear()
-        ax.contour(grid.X, grid.Y, GA.chi, levels=[0.5], colors='red')
-        ax.contour(grid.X, grid.Y, B.chi, levels=[0.5], colors='blue')
-        plt.draw()
-        plt.pause(0.1)
-        _, Gi = step(GA, B, heaviside_eps, sdf_iter, descent_step)
+        c_drawer.draw(GA, B)
+        GA, Gi = step(GA, B, heaviside_eps, sdf_iter, descent_step, drawers)
         G = np.matmul(Gi, G)
-
-        plt.draw()
-
-
     plt.ioff()
     plt.show()
-
-    return GA
-
+    return GA, G
 
 
+def optimise_deform(grid: Grid2D, A: GridForm2D, B: GridForm2D, nb_iter, heaviside_eps=0.5, sdf_iter=100, descent_step=0.2):
+    fig = plt.figure(figsize=(16, 8))
+    c_drawer = ContourDrawer(grid, fig, 221)
+    vf_drawer = VectorFieldDrawer(grid, fig, 222)
+    drawers = [c_drawer, vf_drawer]
+    for i in range(nb_iter):
+        fig.suptitle('Iteration ' + str(i))
+        A = A.deform(optimal_vector_field(A, B, heaviside_eps, sdf_iter, drawers), descent_step)
+        c_drawer.draw(A, B)
+    plt.ioff()
+    plt.show()
+    return A
 
 
 
