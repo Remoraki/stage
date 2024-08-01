@@ -200,8 +200,10 @@ def optimise(grid: Grid2D, A: GridForm2D, B: GridForm2D, nb_iter, heaviside_eps=
 
 def optimise_no_deform(grid: Grid2D, A: GridForm2D, B: GridForm2D, nb_iter, heaviside_eps=0.5, sdf_iter=100, descent_step=0.2):
     fig = plt.figure(figsize=(16, 8))
-    c_drawer = ContourDrawer(grid, fig, 121)
-    vf_drawer = VectorFieldDrawer(grid, fig, 122)
+    c_drawer = ContourDrawer(grid, fig, 141, "Shapes contours")
+    vf_drawer = VectorFieldDrawer(grid, fig, 142, "Deformation vector field")
+    sim_drawer = SimDrawer(grid, fig, 143, "Local similarity vector field")
+    G_drawer = SimDrawer(grid, fig, 144, "Global similarity vector field")
     drawers = [c_drawer, vf_drawer]
     G = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
     GA = A
@@ -211,6 +213,9 @@ def optimise_no_deform(grid: Grid2D, A: GridForm2D, B: GridForm2D, nb_iter, heav
         c_drawer.draw(GA, B)
         GA, Gi = step(GA, B, heaviside_eps, sdf_iter, descent_step, drawers)
         G = np.matmul(Gi, G)
+        sim_drawer.draw_on_shape(Gi, GA)
+        G_drawer.draw_on_shape(G, A)
+        fig.savefig('results/' + str(i) + '.png')
     plt.ioff()
     plt.show()
     return GA, G
@@ -218,8 +223,8 @@ def optimise_no_deform(grid: Grid2D, A: GridForm2D, B: GridForm2D, nb_iter, heav
 
 def optimise_deform(grid: Grid2D, A: GridForm2D, B: GridForm2D, nb_iter, heaviside_eps=0.5, sdf_iter=100, descent_step=0.2):
     fig = plt.figure(figsize=(16, 8))
-    c_drawer = ContourDrawer(grid, fig, 221)
-    vf_drawer = VectorFieldDrawer(grid, fig, 222)
+    c_drawer = ContourDrawer(grid, fig, 221, "Shapes contours")
+    vf_drawer = VectorFieldDrawer(grid, fig, 222, "Deformation vector field")
     drawers = [c_drawer, vf_drawer]
     for i in range(nb_iter):
         fig.suptitle('Iteration ' + str(i))

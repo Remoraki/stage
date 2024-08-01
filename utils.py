@@ -53,11 +53,12 @@ def load_current(load_all=False):
 
 
 class Drawer:
-    def __init__(self, grid, fig, index):
+    def __init__(self, grid, fig, index, title=""):
         plt.ion()
         self.fig = fig
         self.ax = plt.subplot(index)
         self.grid = grid
+        self.title = title
 
 
 class ContourDrawer(Drawer):
@@ -67,6 +68,7 @@ class ContourDrawer(Drawer):
         ax.clear()
         ax.contour(grid.X, grid.Y, A.chi, levels=[0.5], colors='red')
         ax.contour(grid.X, grid.Y, B.chi, levels=[0.5], colors='blue')
+        self.ax.set_title(self.title)
         plt.draw()
         plt.pause(0.1)
 
@@ -77,6 +79,7 @@ class VectorFieldDrawer(Drawer):
         ax = self.ax
         ax.clear()
         ax.quiver(grid.X, grid.Y, v[:, :, 0], v[:, :, 1])
+        self.ax.set_title(self.title)
         plt.draw()
         plt.pause(0.1)
 
@@ -88,8 +91,23 @@ class ScalarFieldDrawer(Drawer):
         ax.clear()
         ax.imshow(s)
         ax.invert_yaxis()
+        self.ax.set_title(self.title)
         plt.draw()
         plt.pause(0.1)
+
+
+class SimDrawer(VectorFieldDrawer):
+    def draw_on_shape(self, G, A: GridForm2D):
+        X = self.grid.X.flatten()
+        Y = self.grid.Y.flatten()
+        Z = np.ones_like(X)
+        P = np.vstack((X, Y, Z))
+        P = np.matmul(G, P)
+        NX = P[0, :]
+        NY = P[1, :]
+        DX = (NX - X) * A.chi.flatten()
+        DY = (NY - Y) * A.chi.flatten()
+        super().draw(np.dstack((DX, DY)))
 
 
 def plot_form_contour(form: GridForm2D, title='form', color='red', scaled=False, squared_scale=True, fig=None):

@@ -75,5 +75,5 @@ def initialise(A0: GridForm2D, B: GridForm2D, align=True):
         A = A0.similarity(G)
     else:
         A = A0
-    grid, [A, B] = rescale_all([A, B], 0.1, True)
+    grid, [A, B] = rescale_all([A, B], 0.1, False)
     return grid, A, B
