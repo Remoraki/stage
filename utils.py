@@ -15,7 +15,14 @@ def save_init(A0: GridForm2D):
     grid = A0.grid
     grid_dic = {'res': grid.resolution, 'bl': grid.bottom_left, 'tr': grid.top_right}
     np.save('A0', A0.chi)
-    np.save('grid', grid_dic, True)
+    np.save('grid0', grid_dic, True)
+
+
+def load_init():
+    grid_info = np.load('grid0.npy', allow_pickle=True).item()
+    grid = Grid2D(grid_info['bl'], grid_info['tr'], grid_info['res'])
+    A0 = grid.form(np.load('A0.npy'))
+    return A0
 
 
 def save_current(A: GridForm2D, B: GridForm2D = None, border_width=0.2, square_output=True):
@@ -59,6 +66,12 @@ class Drawer:
         self.ax = plt.subplot(index)
         self.grid = grid
         self.title = title
+        self.ax.set_title(self.title)
+
+
+class NullDrawer:
+    def draw(self, A):
+        return
 
 
 class ContourDrawer(Drawer):
@@ -74,11 +87,15 @@ class ContourDrawer(Drawer):
 
 
 class VectorFieldDrawer(Drawer):
+    def __init__(self, grid, fig, index, title="", scale=1.0):
+        super().__init__(grid, fig, index)
+        self.scale = scale
+
     def draw(self, v):
         grid = self.grid
         ax = self.ax
         ax.clear()
-        ax.quiver(grid.X, grid.Y, v[:, :, 0], v[:, :, 1])
+        ax.quiver(grid.X, grid.Y, v[:, :, 0], v[:, :, 1], scale=self.scale)
         self.ax.set_title(self.title)
         plt.draw()
         plt.pause(0.1)
@@ -97,6 +114,10 @@ class ScalarFieldDrawer(Drawer):
 
 
 class SimDrawer(VectorFieldDrawer):
+    def __init__(self, grid, fig, index, title="", scale=1.0):
+        super().__init__(grid, fig, index, title, scale)
+        self.sim_grid = None
+
     def draw_on_shape(self, G, A: GridForm2D):
         X = self.grid.X.flatten()
         Y = self.grid.Y.flatten()
@@ -107,7 +128,10 @@ class SimDrawer(VectorFieldDrawer):
         NY = P[1, :]
         DX = (NX - X) * A.chi.flatten()
         DY = (NY - Y) * A.chi.flatten()
-        super().draw(np.dstack((DX, DY)))
+        gDX = np.reshape(DX, self.grid.X.shape)
+        gDY = np.reshape(DY, self.grid.Y.shape)
+        self.sim_grid = np.dstack((gDX, gDY))
+        super().draw(self.sim_grid)
 
 
 def plot_form_contour(form: GridForm2D, title='form', color='red', scaled=False, squared_scale=True, fig=None):
