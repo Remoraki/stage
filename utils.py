@@ -14,14 +14,14 @@ def save_init(A0: GridForm2D):
     """
     grid = A0.grid
     grid_dic = {'res': grid.resolution, 'bl': grid.bottom_left, 'tr': grid.top_right}
-    np.save('A0', A0.chi)
-    np.save('grid0', grid_dic, True)
+    np.save('Data/A0', A0.chi)
+    np.save('Data/grid0', grid_dic, True)
 
 
 def load_init():
-    grid_info = np.load('grid0.npy', allow_pickle=True).item()
+    grid_info = np.load('Data/grid0.npy', allow_pickle=True).item()
     grid = Grid2D(grid_info['bl'], grid_info['tr'], grid_info['res'])
-    A0 = grid.form(np.load('A0.npy'))
+    A0 = grid.form(np.load('Data/A0.npy'))
     return A0
 
 
@@ -36,11 +36,14 @@ def save_current(A: GridForm2D, B: GridForm2D = None, border_width=0.2, square_o
     :return:
     """
     if B is not None:
-        grid, [A, B] = rescale_all([A, B], border_width, square_output)
-        np.save('B', B.chi)
+        if A.grid != B.grid:
+            grid, [A, B] = rescale_all([A, B], border_width, square_output)
+        else:
+            grid = B.grid
+        np.save('Data/B', B.chi)
         grid_dic = {'res': grid.resolution, 'bl': grid.bottom_left, 'tr': grid.top_right}
-        np.save('grid', grid_dic, True)
-    np.save('A', A.chi)
+        np.save('Data/grid', grid_dic, True)
+    np.save('Data/A', A.chi)
 
 
 def load_current(load_all=False):
@@ -49,11 +52,11 @@ def load_current(load_all=False):
     :param load_all: Do you need to all target shape and common grid as well
     :return: If load_all: (grid, A, B), else:(A)
     """
-    grid_info = np.load('grid.npy', allow_pickle=True).item()
+    grid_info = np.load('Data/grid.npy', allow_pickle=True).item()
     grid = Grid2D(grid_info['bl'], grid_info['tr'], grid_info['res'])
-    A = grid.form(np.load('A.npy'))
+    A = grid.form(np.load('Data/A.npy'))
     if load_all:
-        B = grid.form(np.load('B.npy'))
+        B = grid.form(np.load('Data/B.npy'))
         return grid, A, B
     else:
         return A
@@ -75,12 +78,13 @@ class NullDrawer:
 
 
 class ContourDrawer(Drawer):
-    def draw(self, A, B):
+    def draw(self, A, B=None):
         grid = self.grid
         ax = self.ax
         ax.clear()
         ax.contour(grid.X, grid.Y, A.chi, levels=[0.5], colors='red')
-        ax.contour(grid.X, grid.Y, B.chi, levels=[0.5], colors='blue')
+        if B is not None:
+            ax.contour(grid.X, grid.Y, B.chi, levels=[0.5], colors='blue')
         self.ax.set_title(self.title)
         plt.draw()
         plt.pause(0.1)
@@ -119,6 +123,9 @@ class SimDrawer(VectorFieldDrawer):
         self.sim_grid = None
 
     def draw_on_shape(self, G, A: GridForm2D):
+        self.draw_on_chi(A.chi.flatten())
+
+    def draw_on_chi(self, G, chi):
         X = self.grid.X.flatten()
         Y = self.grid.Y.flatten()
         Z = np.ones_like(X)
@@ -126,15 +133,17 @@ class SimDrawer(VectorFieldDrawer):
         P = np.matmul(G, P)
         NX = P[0, :]
         NY = P[1, :]
-        DX = (NX - X) * A.chi.flatten()
-        DY = (NY - Y) * A.chi.flatten()
+        DX = (NX - X) * chi
+        DY = (NY - Y) * chi
         gDX = np.reshape(DX, self.grid.X.shape)
         gDY = np.reshape(DY, self.grid.Y.shape)
         self.sim_grid = np.dstack((gDX, gDY))
         super().draw(self.sim_grid)
 
 
-def plot_form_contour(form: GridForm2D, title='form', color='red', scaled=False, squared_scale=True, fig=None):
+
+
+def draw_form_contour(form: GridForm2D, title='form', color='red', scaled=False, squared_scale=True, fig=None):
     """
     Plot the form with a contour plot
     :param form: GridForm2D

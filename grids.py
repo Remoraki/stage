@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 from matplotlib import pyplot as plt
 from redistance import redistance
 from scipy.interpolate import griddata
@@ -66,6 +67,9 @@ class Grid2D:
         self.resolution = resolution
         self.X, self.Y = np.meshgrid(X, Y)
         self.shape = self.X.shape
+        self.m = resolution[0]
+        self.n = resolution[1]
+        self.extent = [bottom_left[0], top_right[0], bottom_left[1], top_right[1]]
 
     def form(self, values):
         """
@@ -125,6 +129,9 @@ class Grid2D:
             return np.vstack((X, Y))
         else:
             return np.vstack((X, Y, np.ones_like(X)))
+
+    def tensor(self, device, extended=False):
+        return torch.from_numpy(np.transpose(self.flatten(extended))).to(device)
 
 
 class GridForm2D:

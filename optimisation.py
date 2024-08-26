@@ -6,13 +6,9 @@ from utils import *
 from scipy.linalg import expm
 
 
-"""
-Do one optimisation step
-"""
 
-
-def soft_heaviside(x, epsilon=0.1):
-    return 0.5*(1 + (2/np.pi)*np.atan(x/epsilon))
+def soft_heaviside(x, epsilon=0.5):
+    return 0.5*(1 + (2/np.pi)*np.arctan(x/epsilon))
 
 
 def soft_delta(x, epsilon=0.1):
@@ -100,7 +96,7 @@ def gram_matrix2d(shape: 'GridForm2D', heaviside_eps):
     return grid.integrate(g)
 
 
-def similarity_projection2d(A: GridForm2D, v, heaviside_eps):
+def similarity_projection2d_old(A: GridForm2D, v, heaviside_eps):
     """
     Project a vector field on a 2d shape similarity space
     :param A: The shape
@@ -134,7 +130,7 @@ def similarity_projection2d(A: GridForm2D, v, heaviside_eps):
     return dG
 
 
-def similarity_projection2d_adj(A: GridForm2D, v, heaviside_eps):
+def similarity_projection2d(A: GridForm2D, v, heaviside_eps):
     grid = A.grid
     X = grid.X
     Y = grid.Y
@@ -155,8 +151,6 @@ def similarity_projection2d_adj(A: GridForm2D, v, heaviside_eps):
 
 
 
-
-
 def step(A: GridForm2D, B: GridForm2D, heaviside_eps=0.5, sdf_iter=100, descent_step=0.1, drawers=None):
     """
     Perform one optimisation step
@@ -172,7 +166,7 @@ def step(A: GridForm2D, B: GridForm2D, heaviside_eps=0.5, sdf_iter=100, descent_
     np.save('v', deform_field)
     chi_A, chi_B = chi_funcs(A, B, heaviside_eps, sdf_iter)
     # Projecting the vector field on the similarities space
-    dG = similarity_projection2d_adj(A, deform_field, heaviside_eps)
+    dG = similarity_projection2d(A, deform_field, heaviside_eps)
     G = expm(descent_step * dG)
     # Computing the transformed shape
     GA = A.similarity(G)
@@ -204,7 +198,6 @@ def optimise_no_deform(grid: Grid2D, A: GridForm2D, B: GridForm2D, nb_iter, heav
         G = np.matmul(Gi, G)
         sim_drawer.draw_on_shape(Gi, GA)
         G_drawer.draw_on_shape(G, A)
-        fig.savefig('results/' + str(i) + '.png')
     plt.ioff()
     plt.show()
     return GA, G
@@ -223,14 +216,6 @@ def optimise_deform(grid: Grid2D, A: GridForm2D, B: GridForm2D, nb_iter, heavisi
     return A
 
 
-def vector_field_drawers(grid):
-    fig2 = plt.figure(figsize=(16, 8))
-    chi_drawer = ScalarFieldDrawer(grid, fig2, 141, 'Chi diff')
-    delta_drawer = ScalarFieldDrawer(grid, fig2, 142, 'Soft delta')
-    sdf_drawer = ScalarFieldDrawer(grid, fig2, 143, 'Sdf')
-    grad_drawer = VectorFieldDrawer(grid, fig2, 144, 'Sdf Gradient', 50)
-    drawers = [chi_drawer, delta_drawer, sdf_drawer, grad_drawer]
-    return fig2, drawers
 
 
 

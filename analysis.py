@@ -21,7 +21,7 @@ c_drawer = ScalarFieldDrawer(grid, fig, 133)
 
 v_drawer.draw(v)
 
-dG = opt.similarity_projection2d_adj(A0, v, 0.5)
+dG = opt.similarity_projection2d(A0, v, 0.5)
 G = expm(dG)
 g_drawer.draw_on_shape(G, A)
 g_grid = g_drawer.sim_grid
