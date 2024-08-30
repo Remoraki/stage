@@ -7,6 +7,7 @@ from neural_sdf.net import SDFNet
 from grids import Grid2D
 import initialisation as init
 
+
 class NeuralInitializer:
     """
     Class used to initialise an optimisation alignment problem

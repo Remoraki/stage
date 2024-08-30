@@ -4,24 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eb26c681-7293-4ded-8906-9fff2700706d" name="Changes" comment="neural sdf (SDFNet) working">
-      <change afterPath="$PROJECT_DIR$/alignment/shape_alignement.py" afterDir="false" />
+    <list default="true" id="eb26c681-7293-4ded-8906-9fff2700706d" name="Changes" comment="comments and cleaning">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/grids.py" beforeDir="false" afterPath="$PROJECT_DIR$/grids.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/initialisation.py" beforeDir="false" afterPath="$PROJECT_DIR$/alignment/initialisation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neural_initialisation.py" beforeDir="false" afterPath="$PROJECT_DIR$/alignment/neural_initialisation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neural_optimisation.py" beforeDir="false" afterPath="$PROJECT_DIR$/alignment/neural_optimisation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neural_sdf/sdf2d.py" beforeDir="false" afterPath="$PROJECT_DIR$/neural_sdf/sdf2d.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/optimisation.py" beforeDir="false" afterPath="$PROJECT_DIR$/alignment/optimisation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sdf_net/drawer.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sdf_net/loader.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sdf_net/net.py" beforeDir="false" afterPath="$PROJECT_DIR$/neural_sdf/net.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sdf_net/renderer.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sdf_net/sampler.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sdf_net/shape.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sdf_net/trainer.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/shape_alignement.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alignment/initialisation.py" beforeDir="false" afterPath="$PROJECT_DIR$/alignment/initialisation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alignment/neural_initialisation.py" beforeDir="false" afterPath="$PROJECT_DIR$/alignment/neural_initialisation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alignment/optimisation.py" beforeDir="false" afterPath="$PROJECT_DIR$/alignment/optimisation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alignment/shape_alignement.py" beforeDir="false" afterPath="$PROJECT_DIR$/alignment/shape_alignement.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -113,6 +101,7 @@
       <recent name="C:\Users\gagag\PycharmProjects\stage" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/alignment" />
       <recent name="$PROJECT_DIR$/neural_sdf" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/Data" />
@@ -306,7 +295,7 @@
       <workItem from="1724938851488" duration="596000" />
       <workItem from="1724939473426" duration="2059000" />
       <workItem from="1724941591999" duration="1882000" />
-      <workItem from="1725003443552" duration="5349000" />
+      <workItem from="1725003443552" duration="6080000" />
     </task>
     <task id="LOCAL-00001" summary="init commit">
       <option name="closed" value="true" />
@@ -524,7 +513,15 @@
       <option name="project" value="LOCAL" />
       <updated>1725003485832</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="comments and cleaning">
+      <option name="closed" value="true" />
+      <created>1725008909440</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1725008909440</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -553,7 +550,8 @@
     <MESSAGE value="save post projection" />
     <MESSAGE value="neural sdf" />
     <MESSAGE value="neural sdf (SDFNet) working" />
-    <option name="LAST_COMMIT_MESSAGE" value="neural sdf (SDFNet) working" />
+    <MESSAGE value="comments and cleaning" />
+    <option name="LAST_COMMIT_MESSAGE" value="comments and cleaning" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -597,7 +595,7 @@
     <SUITE FILE_PATH="coverage/stage$retroprojection_test__1_.coverage" NAME="retroprojection_test (1) Coverage Results" MODIFIED="1720515119592" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$shapes.coverage" NAME="shapes Coverage Results" MODIFIED="1720096615446" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$multi_resolution.coverage" NAME="multi_resolution Coverage Results" MODIFIED="1720602397017" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/stage$shape_alignement.coverage" NAME="shape_alignement Coverage Results" MODIFIED="1725008793639" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/stage$shape_alignement.coverage" NAME="shape_alignement Coverage Results" MODIFIED="1725008831247" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$rasterization.coverage" NAME="rasterization Coverage Results" MODIFIED="1720530608195" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$loader.coverage" NAME="loader Coverage Results" MODIFIED="1721921984981" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$test.coverage" NAME="test Coverage Results" MODIFIED="1720095652649" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

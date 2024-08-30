@@ -7,6 +7,7 @@ from utils import *
 
 """
 Script that initialise a model shape and a target shape, and proceed to its alignment via the moments.
+Should be rewritten as a class for more ease of use at some point.
 """
 
 

@@ -15,7 +15,8 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 """Two functions to use : One that uses regular grid and functions that are defined directly on it,
 and one that uses sdf networks.
-In the examples below, grid functions are explicitly defined, and networks are loaded through weight dictionaries. """
+In the examples below, grid functions are explicitly defined, and networks are loaded through weight dictionaries.
+The other files in the alignment folder are used throughout the process and don't need to be run"""
 
 
 # Definitions of literal expressions for shapes to use with grids
@@ -30,6 +31,8 @@ def B_shape(grid: Grid2D):
 def C_shape(grid: Grid2D):
     X, Y = grid.X, grid.Y
     return np.logical_and(np.abs(X) < 1, np.abs(Y) < 1).astype(float)
+
+# Alignment functions
 
 def align_shapes():
     """

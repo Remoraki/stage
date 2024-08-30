@@ -6,7 +6,8 @@ from utils import *
 from scipy.linalg import expm
 
 """
-Perform the alignment of two shapes
+Perform the alignment of two shapes. This is for the usage of grids and does not work with networks. 
+Should be rewritten as a class for more ease of use at some point.
 """
 
 def soft_heaviside(x, epsilon=0.5):
