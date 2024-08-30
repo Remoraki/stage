@@ -97,7 +97,7 @@ class Grid2D:
     def integrate(self, values):
         """
         Perform integration on the grid
-        :param values: A grid-shaped array
+        :param values: A grid-shaped array of values
         :return: The integral value
         """
         if (values.shape[0] != self.shape[0] or values.shape[1] != self.shape[1]
@@ -124,6 +124,11 @@ class Grid2D:
         return np.sum(values * mask, axis=(0, 1)) * self.dS[0] * self.dS[1]
 
     def flatten(self, extended=False):
+        """
+        Get the flattened version of a grid
+        :param extended: If coordinates should be extended
+        :return: (3,n) array of [X,Y,1] if extended, (2,n) array otherwise
+        """
         X = self.X.flatten()
         Y = self.Y.flatten()
         if not extended:

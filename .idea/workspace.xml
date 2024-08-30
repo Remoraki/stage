@@ -4,17 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eb26c681-7293-4ded-8906-9fff2700706d" name="Changes" comment="neural sdf">
-      <change afterPath="$PROJECT_DIR$/mask_maker.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/neural_initialisation.py" afterDir="false" />
+    <list default="true" id="eb26c681-7293-4ded-8906-9fff2700706d" name="Changes" comment="neural sdf (SDFNet) working">
+      <change afterPath="$PROJECT_DIR$/alignment/shape_alignement.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analysis.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/grids.py" beforeDir="false" afterPath="$PROJECT_DIR$/grids.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/initialisation.py" beforeDir="false" afterPath="$PROJECT_DIR$/initialisation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neural_optimisation.py" beforeDir="false" afterPath="$PROJECT_DIR$/neural_optimisation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/initialisation.py" beforeDir="false" afterPath="$PROJECT_DIR$/alignment/initialisation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/neural_initialisation.py" beforeDir="false" afterPath="$PROJECT_DIR$/alignment/neural_initialisation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/neural_optimisation.py" beforeDir="false" afterPath="$PROJECT_DIR$/alignment/neural_optimisation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/neural_sdf/sdf2d.py" beforeDir="false" afterPath="$PROJECT_DIR$/neural_sdf/sdf2d.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neural_sdf/train_sdf.py" beforeDir="false" afterPath="$PROJECT_DIR$/neural_sdf/train_sdf.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shape_alignement.py" beforeDir="false" afterPath="$PROJECT_DIR$/shape_alignement.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optimisation.py" beforeDir="false" afterPath="$PROJECT_DIR$/alignment/optimisation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sdf_net/drawer.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sdf_net/loader.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sdf_net/net.py" beforeDir="false" afterPath="$PROJECT_DIR$/neural_sdf/net.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sdf_net/renderer.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sdf_net/sampler.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sdf_net/shape.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sdf_net/trainer.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/shape_alignement.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -59,58 +65,58 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.ChanVese.executor": "Run",
-    "Python.SDF_3D.executor": "Run",
-    "Python.SimpleGAC.executor": "Run",
-    "Python.analysis.executor": "Run",
-    "Python.image_shape_from_silhouette.executor": "Run",
-    "Python.initialisation (1).executor": "Run",
-    "Python.initialisation.executor": "Run",
-    "Python.loader.executor": "Run",
-    "Python.main.executor": "Debug",
-    "Python.mask_maker.executor": "Run",
-    "Python.multi_resolution.executor": "Run",
-    "Python.neural_optimisation.executor": "Run",
-    "Python.octogon_mask.executor": "Run",
-    "Python.optimisation.executor": "Run",
-    "Python.rasterization (1).executor": "Run",
-    "Python.rasterization.executor": "Run",
-    "Python.reconstruction.executor": "Run",
-    "Python.redistance.executor": "Run",
-    "Python.retroprojection.executor": "Debug",
-    "Python.retroprojection_test (1).executor": "Run",
-    "Python.retroprojection_test.executor": "Run",
-    "Python.shape_alignement.executor": "Run",
-    "Python.shapes.executor": "Run",
-    "Python.similarities.executor": "Run",
-    "Python.temp.executor": "Run",
-    "Python.test.executor": "Run",
-    "Python.trainer.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "/home/gabriel/PycharmProjects/2d-sdf-net-main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.ChanVese.executor&quot;: &quot;Run&quot;,
+    &quot;Python.SDF_3D.executor&quot;: &quot;Run&quot;,
+    &quot;Python.SimpleGAC.executor&quot;: &quot;Run&quot;,
+    &quot;Python.analysis.executor&quot;: &quot;Run&quot;,
+    &quot;Python.image_shape_from_silhouette.executor&quot;: &quot;Run&quot;,
+    &quot;Python.initialisation (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.initialisation.executor&quot;: &quot;Run&quot;,
+    &quot;Python.loader.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.mask_maker.executor&quot;: &quot;Run&quot;,
+    &quot;Python.multi_resolution.executor&quot;: &quot;Run&quot;,
+    &quot;Python.neural_optimisation.executor&quot;: &quot;Run&quot;,
+    &quot;Python.octogon_mask.executor&quot;: &quot;Run&quot;,
+    &quot;Python.optimisation.executor&quot;: &quot;Run&quot;,
+    &quot;Python.rasterization (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.rasterization.executor&quot;: &quot;Run&quot;,
+    &quot;Python.reconstruction.executor&quot;: &quot;Run&quot;,
+    &quot;Python.redistance.executor&quot;: &quot;Run&quot;,
+    &quot;Python.retroprojection.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.retroprojection_test (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.retroprojection_test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.shape_alignement.executor&quot;: &quot;Run&quot;,
+    &quot;Python.shapes.executor&quot;: &quot;Run&quot;,
+    &quot;Python.similarities.executor&quot;: &quot;Run&quot;,
+    &quot;Python.temp.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.trainer.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/gabriel/PycharmProjects/2d-sdf-net-main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\gagag\PycharmProjects\stage" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/Data" />
       <recent name="$PROJECT_DIR$/neural_sdf" />
-      <recent name="$PROJECT_DIR$/shape_from_silhouette" />
       <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/Data" />
+      <recent name="$PROJECT_DIR$/shape_from_silhouette" />
     </key>
   </component>
   <component name="RunManager" selected="Python.shape_alignement">
@@ -197,7 +203,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/shape_alignement.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/alignment/shape_alignement.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -300,6 +306,7 @@
       <workItem from="1724938851488" duration="596000" />
       <workItem from="1724939473426" duration="2059000" />
       <workItem from="1724941591999" duration="1882000" />
+      <workItem from="1725003443552" duration="5349000" />
     </task>
     <task id="LOCAL-00001" summary="init commit">
       <option name="closed" value="true" />
@@ -509,7 +516,15 @@
       <option name="project" value="LOCAL" />
       <updated>1724659496919</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="neural sdf (SDFNet) working">
+      <option name="closed" value="true" />
+      <created>1725003485832</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1725003485832</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -537,7 +552,8 @@
     <MESSAGE value="projection still not working" />
     <MESSAGE value="save post projection" />
     <MESSAGE value="neural sdf" />
-    <option name="LAST_COMMIT_MESSAGE" value="neural sdf" />
+    <MESSAGE value="neural sdf (SDFNet) working" />
+    <option name="LAST_COMMIT_MESSAGE" value="neural sdf (SDFNet) working" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -551,21 +567,6 @@
           <url>file://$PROJECT_DIR$/redistance.py</url>
           <line>209</line>
           <option name="timeStamp" value="150" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/initialisation.py</url>
-          <line>73</line>
-          <option name="timeStamp" value="201" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/initialisation.py</url>
-          <line>57</line>
-          <option name="timeStamp" value="276" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils.py</url>
-          <line>131</line>
-          <option name="timeStamp" value="279" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -582,8 +583,8 @@
     <SUITE FILE_PATH="coverage/stage$image_shape_from_silhouette.coverage" NAME="main Coverage Results" MODIFIED="1720540937135" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$reconstruction.coverage" NAME="reconstruction Coverage Results" MODIFIED="1724070791086" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/shape_from_silhouette" />
     <SUITE FILE_PATH="coverage/stage$SimpleGAC.coverage" NAME="SimpleGAC Coverage Results" MODIFIED="1721812788132" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Levelsets" />
-    <SUITE FILE_PATH="coverage/stage$redistance.coverage" NAME="redistance Coverage Results" MODIFIED="1721656233058" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$ChanVese.coverage" NAME="ChanVese Coverage Results" MODIFIED="1724057666062" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Levelsets" />
+    <SUITE FILE_PATH="coverage/stage$redistance.coverage" NAME="redistance Coverage Results" MODIFIED="1721656233058" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$SDF_3D.coverage" NAME="SDF_3D Coverage Results" MODIFIED="1721632982675" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$octogon_mask.coverage" NAME="mask_maker Coverage Results" MODIFIED="1724845398109" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$initialisation__1_.coverage" NAME="initialisation (1) Coverage Results" MODIFIED="1721979838137" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -596,7 +597,7 @@
     <SUITE FILE_PATH="coverage/stage$retroprojection_test__1_.coverage" NAME="retroprojection_test (1) Coverage Results" MODIFIED="1720515119592" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$shapes.coverage" NAME="shapes Coverage Results" MODIFIED="1720096615446" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$multi_resolution.coverage" NAME="multi_resolution Coverage Results" MODIFIED="1720602397017" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/stage$shape_alignement.coverage" NAME="shape_alignement Coverage Results" MODIFIED="1724942567142" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/stage$shape_alignement.coverage" NAME="shape_alignement Coverage Results" MODIFIED="1725008793639" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$rasterization.coverage" NAME="rasterization Coverage Results" MODIFIED="1720530608195" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$loader.coverage" NAME="loader Coverage Results" MODIFIED="1721921984981" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/stage$test.coverage" NAME="test Coverage Results" MODIFIED="1720095652649" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

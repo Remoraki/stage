@@ -79,6 +79,9 @@ class NullDrawer:
     def draw_on_chi(self, G, chi):
         return
 
+    def draw_on_shape(self, G, A: GridForm2D):
+        return
+
 
 class ContourDrawer(Drawer):
     def draw(self, A, B=None):
@@ -126,7 +129,7 @@ class SimDrawer(VectorFieldDrawer):
         self.sim_grid = None
 
     def draw_on_shape(self, G, A: GridForm2D):
-        self.draw_on_chi(A.chi.flatten())
+        self.draw_on_chi(G, A.chi.flatten())
 
     def draw_on_chi(self, G, chi):
         X = self.grid.X.flatten()

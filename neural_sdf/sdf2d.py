@@ -9,8 +9,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-from sdf_net.net import SDFNet
+from neural_sdf.net import SDFNet
 from torch.utils.data import DataLoader, TensorDataset
 
 
