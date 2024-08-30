@@ -10,6 +10,8 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from sdf_net.net import SDFNet
+from torch.utils.data import DataLoader, TensorDataset
 
 
 __author__ = "François Lauze, University of Copenhagen"
@@ -29,7 +31,7 @@ class SDF2(nn.Module):
     """
     def __init__(self,
                  num_entries=2,
-                 hidden_size=256,
+                 hidden_size=64,
                  num_hidden_layers=4,
                  skip_connection=(3,),
                  weight_norm=True,
@@ -97,32 +99,34 @@ class SDF2(nn.Module):
 
 
 class SdfDrawer(utils.Drawer):
-
     def draw(self, points):
         image = points.reshape(self.grid.m,  self.grid.n)
         self.ax.clear()
         self.ax.imshow(image, extent=self.grid.extent, origin='lower')
-        self.ax.contour(self.grid.X, self.grid.Y, image, levels=[-0.2, 0, 0.2], colors='r')
+        self.ax.contour(self.grid.X, self.grid.Y, image, levels=[0], colors='r')
         self.ax.set_title(self.title)
         plt.draw()
-        plt.pause(0.001)
+        plt.pause(0.01)
 
-    def draw_sdf(self, sdf: SDF2, device: torch.device):
+    def draw_sdf(self, sdf: SDFNet, device: torch.device):
         points = encoding(self.grid.tensor(device).float())
         output = sdf(points)
         self.draw(output.detach().cpu().numpy())
 
 
+
 def encoding(positions, num_frequencies=4):
+    #temp
+    return positions
     frequencies = 2.0 ** torch.arange(0, num_frequencies, device=positions.device)
     encodings = [positions]
     for freq in frequencies:
-        encodings.append(torch.sin(freq * positions))
-        encodings.append(torch.cos(freq * positions))
+        encodings.append(torch.sin(freq * torch.pi * positions))
+        encodings.append(torch.cos(freq * torch.pi * positions))
     return torch.cat(encodings, dim=-1)
 
 
-def eikonal_loss(points: torch.Tensor, sdf: SDF2) -> torch.Tensor:
+def eikonal_loss(points: torch.Tensor, sdf: SDFNet) -> torch.Tensor:
     """
     The eikonal loss is the square of the gradient of the sdf
     :param sdf: the sdf
@@ -136,28 +140,47 @@ def eikonal_loss(points: torch.Tensor, sdf: SDF2) -> torch.Tensor:
     # compute the eikonal loss
     return torch.mean((sdf_grad_norm - 1.0)**2)
 
+def gradient_loss(points: torch.Tensor, sdf: SDFNet) -> torch.Tensor:
+    sdf_grad = sdf.gradient(points)
+    sdf_grad_norm = torch.linalg.norm(sdf_grad, ord=2, dim=1)
+    return torch.mean(sdf_grad_norm)
 
-def train_sdf(grid: Grid2D, true_sdf, net: SDF2 = None, epochs=100, weight=1, rate=1e-3, drawer: SdfDrawer = None) \
+
+def train_sdf(grid: Grid2D, true_sdf, net: SDFNet = None, epochs=100, batch_size=20000,
+              eik_weight=0.1, grad_weight=1, rate=1e-3, band=0.95, drawer: SdfDrawer = None) \
         -> SDF2:
+    true_sdf = true_sdf.float()
     device = true_sdf.device
-    points = encoding(grid.tensor(device).float())
+    band = torch.where(torch.abs(true_sdf) <= band)[0]
+    points = encoding(grid.tensor(device).float()[band, :])
+    len = points.shape[0]
+
     if net is None:
-        net = SDF2(num_entries=points.shape[1])
+        #net = SDF2(num_entries=points.shape[1])
+        net = SDFNet(inDim=points.shape[1])
     net.to(device)
     optimizer = torch.optim.Adam(net.parameters(), lr=rate)
     loss_value = nn.L1Loss()
 
+    dataset = TensorDataset(points, true_sdf[band])
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
     for epoch in range(epochs):
-        optimizer.zero_grad()
-        output = net(points)
-        loss_v = loss_value(output, true_sdf)
-        loss_e = eikonal_loss(points, net)
-        e_w = 0.0 if epoch < epochs / 2 else weight * epoch / epochs
-        loss = loss_v + e_w * loss_e
-        loss.backward()
-        optimizer.step()
+        for batch_idx, (input, target) in enumerate(dataloader):
+            optimizer.zero_grad()
+            output = net(input)
+            loss_v = loss_value(output, target)
+            loss_e = eikonal_loss(input, net)
+            loss_g = gradient_loss(input, net)
+            e_w = 0.0 if epoch < epochs / 2 else eik_weight * epoch / epochs
+            loss = loss_v + e_w * loss_e + grad_weight * loss_g
+            loss.backward()
+            optimizer.step()
         if drawer is not None:
-            drawer.set_title(str(epoch))
-            drawer.draw(output.detach().cpu().numpy())
+            drawing = true_sdf * np.nan
+            output = net(points)
+            drawing[band] = output
+            drawer.draw(drawing.detach().cpu())
+            drawer.fig.suptitle(str(epoch))
     return net
 

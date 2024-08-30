@@ -20,8 +20,8 @@ def create_grid_and_functions(AFunc, BFunc, grid_size=1, res=(100, 100)):
     :return: grid:Grid2D, A:GridForm2D, B:GridForm2D
     """
     grid = Grid2D([-grid_size, -grid_size], [grid_size, grid_size], res)
-    A_chi = AFunc(grid.X, grid.Y)
-    B_chi = BFunc(grid.X, grid.Y)
+    A_chi = AFunc(grid)
+    B_chi = BFunc(grid)
     A = grid.form(A_chi)
     B = grid.form(B_chi)
     return grid, A, B

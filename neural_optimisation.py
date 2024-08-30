@@ -1,6 +1,7 @@
 import numpy as np
 import torch as torch
 import optimisation as opt
+from neural_initialisation import NeuralInitializer
 from neural_sdf.sdf2d import *
 from utils import *
 from findiffs import *
@@ -8,17 +9,12 @@ from scipy.linalg import expm
 
 
 class NeuralOptimiser:
-    def __init__(self, grid: Grid2D, device):
+    def __init__(self, grid: Grid2D, device, initializer: NeuralInitializer):
         self.grid = grid
         self.device = device
+        self.initializer = initializer
+        self.G = np.eye(3)
 
-    def output(self, sdf: SDF2, G=np.eye(3)):
-        points = self.grid.flatten(True)
-        transformed = np.matmul(G, points)
-        positions = np.transpose(transformed[0:2, :])
-        encoded = encoding(torch.from_numpy(positions)).float().to(self.device)
-        output = sdf(encoded).detach().cpu().numpy()
-        return np.reshape(output, self.grid.shape)
 
     def chi_func(self, phi):
         chi = opt.soft_heaviside(-phi)
@@ -54,10 +50,8 @@ class NeuralOptimiser:
         dG = np.vstack((dG, [0, 0, 0]))
         return dG
 
-
     def optimal_vector_field(self, phi_A, phi_B):
         grad_phi_A = self.phi_grad(phi_A)
-        grad_phi_B = self.phi_grad(phi_B)
         chi_A = self.chi_func(phi_A)
         chi_B = self.chi_func(phi_B)
         chi_diff = chi_A - chi_B
@@ -65,32 +59,29 @@ class NeuralOptimiser:
         deform_field = -chi_diff[:, :, np.newaxis] * delta_phi_A[:, :, np.newaxis] * grad_phi_A
         return deform_field
 
-    def step(self, A_sdf: SDF2, B_sdf: SDF2, Ginv, drawers, descent_step=0.1):
-        phi_A = self.output(A_sdf, Ginv)
-        phi_B = self.output(B_sdf)
+    def step(self, drawers, descent_step=100):
+        phi_A = self.initializer.A_output(self.G)
+        phi_B = self.initializer.B_output()
         drawers[0].draw(phi_A.flatten())
         drawers[1].draw(phi_B.flatten())
         v = self.optimal_vector_field(phi_A, phi_B)
         drawers[2].draw(v)
         dG = self.similarity_projection2d(v, opt.soft_delta(-phi_A))
         G = expm(descent_step * dG)
-        Ginv = np.linalg.inv(G)
         drawers[3].draw_on_chi(G, (phi_A <= 0).astype(float).flatten())
-        return G, Ginv
+        return G
 
-    def optimise(self, A_sdf: SDF2, B_sdf: SDF2, nb_iter):
-        Ginv = np.eye(3)
-        G = np.eye(3)
-        fig = plt.figure(figsize=(16, 8))
+    def optimise(self, nb_iter=20):
+        fig = plt.figure(figsize=(12, 10))
         A_drawer = SdfDrawer(self.grid, fig, 121, 'priori shape')
         B_drawer = SdfDrawer(self.grid, fig, 122, 'target shape')
-        fig1 = plt.figure(figsize=(16, 8))
+        fig1 = plt.figure(figsize=(12, 10))
         grad_drawer = VectorFieldDrawer(self.grid, fig1, 131, 'transformation')
         g_drawer = SimDrawer(self.grid, fig1, 132, 'similarity')
-        G_drawer = SimDrawer(self.grid, fig1, 133, 'total similarity')
+        G_drawer = SimDrawer(self.grid, fig1, 111, 'total similarity')
 
         for i in range(nb_iter):
-            Gi, Ginvi = self.step(A_sdf, B_sdf, Ginv, [A_drawer, B_drawer, grad_drawer, g_drawer])
-            G = np.matmul(Gi, G)
-            Ginv = np.matmul(Ginv, Ginvi)
-        return G
+            Gi = self.step([A_drawer, B_drawer, NullDrawer(), NullDrawer()])
+            self.G = np.matmul(Gi, self.G)
+            G_drawer.draw_on_chi(self.G, (self.initializer.A_output(self.G) <= 0).astype(float).flatten())
+        return self.G

@@ -76,6 +76,9 @@ class NullDrawer:
     def draw(self, A):
         return
 
+    def draw_on_chi(self, G, chi):
+        return
+
 
 class ContourDrawer(Drawer):
     def draw(self, A, B=None):
@@ -87,7 +90,7 @@ class ContourDrawer(Drawer):
             ax.contour(grid.X, grid.Y, B.chi, levels=[0.5], colors='blue')
         self.ax.set_title(self.title)
         plt.draw()
-        plt.pause(0.1)
+        plt.pause(0.01)
 
 
 class VectorFieldDrawer(Drawer):
@@ -102,7 +105,7 @@ class VectorFieldDrawer(Drawer):
         ax.quiver(grid.X, grid.Y, v[:, :, 0], v[:, :, 1], scale=self.scale)
         self.ax.set_title(self.title)
         plt.draw()
-        plt.pause(0.1)
+        plt.pause(0.01)
 
 
 class ScalarFieldDrawer(Drawer):
@@ -114,7 +117,7 @@ class ScalarFieldDrawer(Drawer):
         ax.invert_yaxis()
         self.ax.set_title(self.title)
         plt.draw()
-        plt.pause(0.1)
+        plt.pause(0.01)
 
 
 class SimDrawer(VectorFieldDrawer):

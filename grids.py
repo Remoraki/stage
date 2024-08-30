@@ -70,6 +70,7 @@ class Grid2D:
         self.m = resolution[0]
         self.n = resolution[1]
         self.extent = [bottom_left[0], top_right[0], bottom_left[1], top_right[1]]
+        self.size = (self.extent[1] - self.extent[0], self.extent[3] - self.extent[2])
 
     def form(self, values):
         """

@@ -24,7 +24,7 @@ if __name__ == '__main__':
     form = shape(grid)
     true_sdf = torch.from_numpy(form.get_sdf().flatten()[:, np.newaxis]).float().to(device)
     SdfDrawer(grid).draw(true_sdf.cpu().numpy())
-    trained_sdf = train_sdf(grid, true_sdf, drawer=SdfDrawer(grid), weight=0.1, epochs=500)
+    trained_sdf = train_sdf(grid, true_sdf, drawer=SdfDrawer(grid), eik_weight=0.1, epochs=500)
 
     plt.ioff()
     plt.show()
